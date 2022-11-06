@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+    --yellow: #F8FF00;
+    --yellow-shade: #fbff00;
+    --body-bg: #050404;
+}
+body{
+    background-color: #050404;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+input[type="search"] {
+}
+
+input{
+    background-color: #1b1515;
+    border:1px solid lightgray;
+}
+
+input:focus{
+    background-color: #261e1e !important;
+}
+.section{
+    background-color: #140F0F;
+}
+
+.accent-color{
+    color: #FBFF00 !important;
+}
+
+.accent-color-shade{
+    color: #fbff00 !important;
+}
+
+input.accent-color-shade{
+    background-color: #CCCCCC !important;
+}
+/* .section h3{
+    color: #F7A9A8 !important;
+}
+
+.section p{
+    color: #F7A9A8 !important;
+}
+
+.section hr{
+    color: #613F75 !important;
+    background-color: #613F75 !important;
+    border-color: #EF798A
+} */
+
+.section::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  /* Track */
+  .section::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  /* Handle */
+  .section::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+  
+  /* Handle on hover */
+  .section::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
