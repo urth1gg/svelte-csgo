@@ -11,7 +11,7 @@
         window.location.reload()
     }
 </script>
-<nav class="section">
+<nav class="gradient-section">
     <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
         <div class="relative flex items-center justify-between h-16">
             <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -34,7 +34,7 @@
                 </div>
                 <div class="hidden sm:block sm:ml-6 w-full">
                     <div class="flex space w-full">
-                        <div class="relative accent-color-shade focus-within:accent-color-shade w-[300px]">
+                        <div class="relative accent-color-shade w-[300px]">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                                 <button type="submit" class="p-1 focus:outline-none focus:shadow-outline">
                                     <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-6 h-6">
@@ -42,7 +42,7 @@
                                     </svg>
                                 </button>
                             </span>
-                            <input type="search" name="q" class="py-2 input text-sm text-white bg-whitex rounded-md pl-10 pr-2 focus:outline-none focus:bg-white focus:accent-color-shade w-full" placeholder="Search players..." autocomplete="off">
+                            <input type="search" name="q" class="py-2 input text-sm text-white bg-whitex rounded-md pl-10 pr-2 focus:outline-none focus:accent-color-shade w-full" placeholder="Search players..." autocomplete="off">
                         </div>
                         {#if loggedIn}
                             <!-- svelte-ignore a11y-click-events-have-key-events -->

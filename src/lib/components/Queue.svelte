@@ -11,7 +11,7 @@
     }
 </script>
 
-<div class="section grid grid-cols-1 w-9/12 flex text-white p-3 {lazyClass} h-[450px]">
+<div class="section flex flex-col w-9/12 text-white p-3 {lazyClass} h-[450px]">
     {#if lazy}
         <div></div>
     {:else}

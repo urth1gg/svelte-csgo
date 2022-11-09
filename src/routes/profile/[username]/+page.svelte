@@ -8,6 +8,6 @@
 
 <div class="p-5 w-full">
     <div class="flex w-8/12">
-        <Profile {user} {stats} />
+        <Profile {user} />
     </div>
 </div>

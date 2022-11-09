@@ -9,6 +9,12 @@ declare global {
 		}
 	}	
 
+	enum FriendRequestStatus {
+		PENDING = 0,
+		ACCEPTED = 1,
+		DECLINED = 2
+	}
+	
 	interface FormError {
 		error: string,
 		fields: Array<ErrorFormFields> | null,
@@ -23,7 +29,18 @@ declare global {
 		id: string,
 		username: string,
 		email: string,
-		party_id?: string
+		profile_img: string,
+		created_at: string,
+		stats?: Array<Stats>,
+		party_id?: string,
+		friends?: Array<Friend>
+	}
+
+	interface Friend{
+		id: string,
+		friend_id: string,
+		user_id: string,
+		status: FriendRequestStatus
 	}
 
 	interface Stats {
