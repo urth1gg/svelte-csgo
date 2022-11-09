@@ -39,7 +39,7 @@ export const POST: RequestHandler = async function ({locals, request, cookies}){
     let obj = {
         id: data[0].id,
         email: data[0].email,
-        user: data[0].user
+        username: data[0].username
     }
 
     if(!match){

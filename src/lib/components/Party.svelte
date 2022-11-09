@@ -12,31 +12,27 @@
             partyMembers.push({username: '', email: 'X', id: 'X'})
         }
     }
-    accessToken.subscribe(async (token) => {
-        if(token === '') return
-        let res = await fetch_('/api/party')
-    })
+    //let res = fetch_('/api/party')
 
 
     let inQueue = false;
-    let elapsedTime = 0;
-    let date = new Date(0);
-    let dateString: string = '00:00';
+    let dateString = '00:00';
     let interval: NodeJS.Timeout;
 
     function onQueueClick(){
-        inQueue = !inQueue;
-
         clearInterval(interval);
 
-        elapsedTime = 0;
-        dateString = '00:00'
+        inQueue = !inQueue;
+        dateString = '00:00';
+
+        if(!inQueue) return; 
+
+        let date = new Date().getTime(); 
+
         interval = setInterval(() => {
-            elapsedTime += 1;
-            date = new Date(0)
-            date.setSeconds(elapsedTime);
-            dateString = date.toISOString().substr(14, 5);
-            console.log(dateString)
+            let elapsed = new Date().getTime() - date;
+            let date_ = new Date(elapsed);
+            dateString = date_.toISOString().substr(14, 5);
         }, 1000)
     }
 </script>

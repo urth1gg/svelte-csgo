@@ -1,6 +1,7 @@
 <script lang="ts">
     export let loggedIn: boolean;
     export let id: string;
+    export let user: User;
     async function logout(){
         await fetch('http://localhost:5173/api/session', {
             method: 'DELETE',
@@ -33,26 +34,26 @@
                 </div>
                 <div class="hidden sm:block sm:ml-6 w-full">
                     <div class="flex space w-full">
+                        <div class="relative accent-color-shade focus-within:accent-color-shade w-[300px]">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+                                <button type="submit" class="p-1 focus:outline-none focus:shadow-outline">
+                                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-6 h-6">
+                                        <path d="M21 21l-6-6M18 10a8 8 0 11-12.73-5.73A8 8 0 0118 10z"></path>
+                                    </svg>
+                                </button>
+                            </span>
+                            <input type="search" name="q" class="py-2 input text-sm text-white bg-whitex rounded-md pl-10 pr-2 focus:outline-none focus:bg-white focus:accent-color-shade w-full" placeholder="Search players..." autocomplete="off">
+                        </div>
                         {#if loggedIn}
                             <!-- svelte-ignore a11y-click-events-have-key-events -->
                             <!-- svelte-ignore a11y-missing-attribute -->
-                            <div class="relative accent-color-shade focus-within:accent-color-shade w-[300px]">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-                                    <button type="submit" class="p-1 focus:outline-none focus:shadow-outline">
-                                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-6 h-6">
-                                            <path d="M21 21l-6-6M18 10a8 8 0 11-12.73-5.73A8 8 0 0118 10z"></path>
-                                        </svg>
-                                    </button>
-                                </span>
-                                <input type="search" name="q" class="py-2 input text-sm text-white bg-whitex rounded-md pl-10 pr-2 focus:outline-none focus:bg-white focus:accent-color-shade w-full" placeholder="Search players..." autocomplete="off">
-                            </div>
                             <div class="flex justify-end items-center w-full">
                                 <button on:click={logout} class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Logout</button>
-                                <a href="/profile" class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">{id}</a>
+                                <a href="/profile/{user.username}" class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">{id}</a>
                             </div>
                         {:else}
                             <div class="flex justify-end items-center w-full">
-                                <button href="/login" class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</button>
+                                <a href="/login" class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</a>
                                 <a href="/register" class="text-white hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Register</a>
                             </div>
                         {/if}

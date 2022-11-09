@@ -90,7 +90,7 @@
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
                     Email
                 </label>
-                <input bind:value={email} class="{errorClassEmail} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
+                <input bind:value={email} autofocus={true} class="{errorClassEmail} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
                 {#each emailErrors as error}
                     <p class="text-red-500 text-xs italic">{error}</p>
                 {/each}

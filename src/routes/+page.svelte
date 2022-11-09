@@ -1,13 +1,20 @@
 <script lang="ts">
-    import { browser } from '$app/environment';
     import Queue from '$lib/components/Queue.svelte';
-    import OnlineFriends from '$lib/components/OnlineFriends.svelte';
-    export let data; 
+    import FriendRequests from '$lib/components/FriendRequests.svelte';
+    import { accessToken } from '$lib/store/accessToken';
+    import StartPlaying from '$lib/components/unauth/StartPlaying.svelte';
+    import { browser } from '$app/environment';
 
-    let { loggedIn } = data;
+    export let data;
+
+    let { loggedIn, id } : { loggedIn: boolean, id: string } = data;
 </script>
 
 <div class="w-full p-5 flex gap-5">
-    <Queue />
-    <OnlineFriends />
+    {#if loggedIn}
+        <Queue lazy={$accessToken ? false: true }/>
+        <FriendRequests lazy={$accessToken ? false: true }/>
+    {:else}
+        <StartPlaying />
+    {/if}
 </div>

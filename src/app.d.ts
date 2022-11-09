@@ -1,9 +1,11 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 declare global {
+	
 	namespace App {
 		interface Locals {
 			supabase: SupabaseClient,
+			user?: User
 		}
 	}	
 
@@ -21,5 +23,19 @@ declare global {
 		id: string,
 		username: string,
 		email: string,
+		party_id?: string
 	}
+
+	interface Stats {
+		user_id: string,
+		elo: number,
+		wins: number,
+		losses: number,
+		games_played: number,
+		created_at: string,
+		kills: number,
+		deaths: number,
+
+	}
+	type Nullable<T> = T | null;
 }

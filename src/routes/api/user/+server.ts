@@ -16,6 +16,7 @@ export const POST: RequestHandler = async function ({locals, request}){
         password: hash
     });
     
+    console.log(error)
     if(error?.message === 'duplicate key value violates unique constraint "users_email_key"'){
         return json({
             error: "Invalid form values.",
@@ -28,7 +29,11 @@ export const POST: RequestHandler = async function ({locals, request}){
         })
     }
 
-    if(error) throw new Error(error.message)
+    if(error) {
+        return json({
+            error: "Error while creating user."
+        }, {status: 500})
+    }
     
     return json({success: true, message: 'User created'})
 }

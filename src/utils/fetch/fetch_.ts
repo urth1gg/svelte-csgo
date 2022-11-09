@@ -1,13 +1,21 @@
 import { accessToken } from "$lib/store/accessToken";
 
-let val = '';
-accessToken.subscribe((v) => val = v);
 
-function fetch_(url: string, options: RequestInit = {}){
+function fetch_(url: string, options: any = {}){
+    let token = '';
+
+    accessToken.subscribe((val) => {
+        token = val;
+    })
+    
+    let baseUrl = 'http://localhost:5173'
+
     let headers = new Headers();
-    headers.append('Authorization', `Bearer ${val}`)
+    headers.append('Authorization', `Bearer ${token}`)
     headers.append('Content-Type', 'application/json')
-    return fetch(url, {...options, headers: headers, credentials: 'include'})
+
+    return fetch(baseUrl + url, {...options, headers: headers, credentials: 'include'}) 
 }
 
-export {fetch_}
+
+export { fetch_ } 

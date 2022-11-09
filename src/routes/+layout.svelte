@@ -2,31 +2,44 @@
     import "../app.css";
     import { browser } from '$app/environment'; 
     import { accessToken } from '$lib/store/accessToken';
-    import { userData } from '$lib/store/userData';
-    import { afterUpdate, onMount, beforeUpdate } from 'svelte';
     import Nav  from '$lib/components/Nav.svelte';
     import { fetch_ } from "../utils/fetch/fetch_";
+    import { afterUpdate } from "svelte";
 
     export let data;
 
-    let { loggedIn, id } : { loggedIn: boolean, id: string } = data;
-    userData.set({id:id})
+    let { loggedIn, id, user } : { loggedIn: boolean, id: string, user: User } = data;
 
-    async function refreshAT(){
+    let token = '';
+    accessToken.subscribe( value => {
+        token = value;
 
-        // Don't refresh access token if not logged in
-        if(!document.cookie.includes('user')) return;
+        if(value !== '') refreshAccessToken();
+    })
 
+    function makePingRequest(){
+        if(localStorage.getItem('lastPingTime')){
+            const lastPingTime = Number(localStorage.getItem('lastPingTime'));
+            const currentTime = new Date().getTime();
+            const timeDiff = currentTime - lastPingTime;
+            if(timeDiff > 1000 * 60 * 5){
+                fetch_('/api/ping');
+                localStorage.setItem('lastPingTime', currentTime.toString());
+            }
+        }else{
+            fetch_('/api/ping');
+            localStorage.setItem('lastPingTime', new Date().getTime().toString());
+        }
+    }
 
-        // Don't refresh access token if current one is stil valid
-        if($accessToken !== ''){
-            fetch_('/api/ping', {
-                method: 'GET',
-                credentials: 'include'
-            })
-            let t = JSON.parse(window.atob($accessToken.split('.')[1]));
+    async function refreshAccessToken(){
+        if(token !== ''){
+            makePingRequest();
+            let t = JSON.parse(window.atob(token.split('.')[1]));
             if(t.exp > Math.floor(Date.now() / 1000)) return
         }
+
+        if(!document.cookie.includes('user')) return;
 
 
         let res = null;
@@ -50,13 +63,14 @@
         }
     }
 
+    afterUpdate(async () => {
     
-    beforeUpdate(() => {
-        if(browser) refreshAT()
+        if(!browser) return;
+
+        refreshAccessToken()
+
     })
-
-
 </script>
   
-<Nav loggedIn={loggedIn} id={id}/>
-<slot />
+<Nav loggedIn={loggedIn} id={id} user={user}/>
+<slot loggedIn={loggedIn} id={id} />

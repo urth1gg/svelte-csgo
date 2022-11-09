@@ -5,14 +5,13 @@
 :root{
     --yellow: #F8FF00;
     --yellow-shade: #fbff00;
-    --body-bg: #050404;
+    --body-bg: #050404; 
+    --section: #221919;
 }
+
 body{
     background-color: #050404;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-}
-
-input[type="search"] {
 }
 
 input{
@@ -24,6 +23,15 @@ input:focus{
     background-color: #261e1e !important;
 }
 .section{
+    /*background-color: #140F0F;*/
+    background: var(--section);
+    @apply p-3;
+}
+
+nav{
+    @apply p-0;
+}
+.lazyComponent{
     background-color: #140F0F;
 }
 
