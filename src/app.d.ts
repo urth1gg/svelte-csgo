@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { FriendRequestStatus } from '$lib/enums/enums';
 
 declare global {
 	
@@ -8,12 +9,6 @@ declare global {
 			user?: User
 		}
 	}	
-
-	enum FriendRequestStatus {
-		PENDING = 0,
-		ACCEPTED = 1,
-		DECLINED = 2
-	}
 	
 	interface FormError {
 		error: string,

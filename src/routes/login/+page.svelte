@@ -84,22 +84,22 @@
 
 <div class="flex justify-center items-center bg-custom h-screen">
     <div class="w-1/3 max-sm:w-2/3">
-        <h1 class="text-3xl font-bold text-center">Login</h1>
+        <h1 class="text-3xl font-bold text-center text-white">Login</h1>
         <form class="mt-4" on:submit={onSubmit}>
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                <label class="block text-white text-sm font-bold mb-2" for="email">
                     Email
                 </label>
-                <input bind:value={email} autofocus={true} class="{errorClassEmail} shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
+                <input bind:value={email} autofocus={true} class="{errorClassEmail} shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
                 {#each emailErrors as error}
                     <p class="text-red-500 text-xs italic">{error}</p>
                 {/each}
             </div>
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                <label class="block text-white text-sm font-bold mb-2" for="password">
                     Password
                 </label>
-                <input bind:value={password} autocomplete="current-password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
+                <input bind:value={password} autocomplete="current-password" class="bla shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
                 {#each passwordErrors as error}
                     <p class="text-red-500 text-xs italic">{error}</p>
                 {/each}

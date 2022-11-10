@@ -1,17 +1,17 @@
-import { request } from "@playwright/test";
 import type { ServerLoadEvent } from "@sveltejs/kit";
-import { supabase } from "../../../../src/utils/db/supabase";
-import { getStats } from "$lib/services/stats";
-import { getUserAndStats } from "$lib/services/users";
+import { getUserWithAllRelatons } from "$lib/services/users";
 
-export async function load({ params, locals }: ServerLoadEvent) {
+export async function load({ params, locals, cookies }: ServerLoadEvent) {
 
     if(!params.username) return { error: 404 }
-    let user: User | null = await getUserAndStats(params.username, locals.supabase);
 
-    console.log(user)
+    let user: Partial<User> | null;
+    user = await getUserWithAllRelatons(params.username, locals.supabase);
+
+    if(!user) return { error: 404 }
 
     return {
         user: user,
+        userLoggedIn: locals.user
     }
 }

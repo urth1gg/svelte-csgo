@@ -5,11 +5,14 @@
 :root{
     --blue: #4da1ff;
     --blue-shade: #6CE1FF; 
+    --yellow: #FBFF00;
+    --yellow-shade: #fbff00;
     --body-bg: #0079ff; 
     --section: #0088FF;
     --new-bg: #192222;
     --test-color: #0079ff;
     --input-color: #0079ff;
+    --input-focus-color: #1a86ff;
 }
 
 body{
@@ -18,15 +21,36 @@ body{
 }
 
 input{
-    background-color: var(--input-color);
+    background-color: var(--input-color) !important;
+    color:white !important;
     border:1px solid lightgray;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+select:-webkit-autofill,
+select:-webkit-autofill:hover{
+  border: 1px solid white;
+  -webkit-text-fill-color: white;
+  -webkit-box-shadow: 0 0 0px 1000px var(--input-color) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill:focus{
+    border: 1px solid white;
+    -webkit-text-fill-color: white;
+    -webkit-box-shadow: 0 0 0px 1000px var(--input-focus-color) inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
 input::placeholder{
     color: #ccc;
 }
 input:focus{
-    background-color: #1a86ff;
+    background-color: #1a86ff !important;
 }
 .gradient-section{
     background-image: linear-gradient(to right, var(--section) 0%, var(--new-bg) 100%);
@@ -55,6 +79,17 @@ nav{
     color: #fbff00 !important;
 }
 
+.btn{
+    background-color: var(--yellow);
+    color: white;
+    text-shadow: black 0px 0px 4px;
+    transition: 0.25s all ease-out !important;
+    @apply p-2;
+}
+
+.btn:hover{
+    filter: brightness(0.9) !important;
+}
 input.accent-color-shade{
     background-color: #CCCCCC !important;
 }

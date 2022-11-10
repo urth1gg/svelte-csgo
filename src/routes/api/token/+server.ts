@@ -31,8 +31,8 @@ export const POST: RequestHandler = async ({locals, request, cookies}) => {
         }
 
         // Generate new tokens
-        let newAccessToken = jwt.sign({email: verifyRT.email, id: verifyRT.id, user: verifyRT.user}, JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
-        let newRefreshToken = jwt.sign({email: verifyRT.email, id: verifyRT.id, user: verifyRT.user}, JWT_REFRESH_TOKEN_SECRET, { expiresIn: '1d' })
+        let newAccessToken = jwt.sign({email: verifyRT.email, id: verifyRT.id, username: verifyRT.username}, JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
+        let newRefreshToken = jwt.sign({email: verifyRT.email, id: verifyRT.id, username: verifyRT.username}, JWT_REFRESH_TOKEN_SECRET, { expiresIn: '1d' })
 
         refreshTokens.set(verifyRT.email, newRefreshToken)
 

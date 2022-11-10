@@ -39,11 +39,12 @@
 
 <style>
     .btn{
-        background: #1DB954;
-        @apply p-4 rounded-lg font-bold text-sm transition duration-300 ease-in-out;
+        background: #00ff77;
+        @apply p-3 rounded-lg font-bold text-sm;
         width: 120px;
         margin:0 auto;
         margin-top:2rem;
+        text-shadow: black 0px 0px 4px;
     }
 
     .btn:hover{

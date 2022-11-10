@@ -1,6 +1,7 @@
 <script lang='ts'>
     export let src: string; 
     export let username: string;
+    export let userLoggedIn: Partial<User> | null;
 </script>
 
 <style>
@@ -11,6 +12,7 @@
         border:1px solid white;
         @apply rounded-full;
     }
+    
     i{
         @apply text-9xl;
         color: var(--blue-shade);
@@ -28,4 +30,7 @@
     {#if username}
         <h4 class="text-base mt-2 text-center text-[#fff] font-bold">{username}</h4>
     {/if}
+    <div class="flex justify-center items-center mt-5">
+        <button class="btn rounded-lg">Add friend</button>
+    </div>
 </div>

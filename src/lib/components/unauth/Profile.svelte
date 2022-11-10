@@ -2,17 +2,25 @@
     import { browser } from '$app/environment';
     import SectionHeader from '$lib/components/SectionHeader.svelte';
     import LoadableImage from '../inputs/LoadableImage.svelte';
-
+    import { afterUpdate } from 'svelte';
+    import { accessToken } from '$lib/store/accessToken';
     export let user: User;
-    let stats: Stats | undefined = user.stats?.[0]
+    export let userLoggedIn: Partial<User> | null;
 
+    let stats: Stats | undefined;
     let winRate = 0;
     let kdRatio = 0;
+
+
+    stats = user.stats?.[0];
 
     if(stats){
         winRate = stats.wins/stats.losses * 100;
         kdRatio = stats.kills/stats.deaths;
     }
+
+    console.log('Profile')
+    console.log(userLoggedIn)
 </script>
 
 <style>
@@ -23,7 +31,7 @@
 </style>
 <div class="section w-full flex">
     <div class="w-2/12">
-        <LoadableImage src={user.profile_img} username={user.username}/>
+        <LoadableImage src={user.profile_img} username={user.username} {userLoggedIn} />
     </div>
     <div class="w-8/12 ml-auto mr-auto">
         <SectionHeader title="STATS" />

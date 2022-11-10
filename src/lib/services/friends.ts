@@ -1,4 +1,5 @@
 import { supabase } from "../../utils/db/supabase";
+import { FriendRequestStatus } from '$lib/enums/enums';
 
 async function getFriends(user: User | undefined) {
     let acceptedFriends = supabase.from('friends').select('*').eq('user_id', user?.id).eq('status', FriendRequestStatus.ACCEPTED).then();
