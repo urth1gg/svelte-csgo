@@ -12,10 +12,10 @@ declare global {
 	
 	interface FormError {
 		error: string,
-		fields: Array<ErrorFormFields> | null,
+		fields: Array<FormErrorField> | null,
 	}
 	
-	interface FormErrorFields {
+	interface FormErrorField {
 		name: string,
 		message: string
 	}
@@ -26,6 +26,9 @@ declare global {
 		email: string,
 		profile_img: string,
 		created_at: string,
+		isFriend: {
+			status: FriendRequestStatus | undefined,
+		} | null,
 		stats?: Array<Stats>,
 		party_id?: string,
 		friends?: Array<Friend>
@@ -49,5 +52,6 @@ declare global {
 		deaths: number,
 
 	}
+
 	type Nullable<T> = T | null;
 }

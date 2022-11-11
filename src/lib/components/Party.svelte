@@ -1,19 +1,17 @@
 <script lang="ts">
 
-    import { beforeUpdate, onMount } from 'svelte';
-    import { fetch_ } from '../../utils/fetch/fetch_';
-    import { accessToken } from '$lib/store/accessToken';
+    import { userData } from "$lib/store/userData";
 
 
-    let partyMembers: User[] = [];
+    let partyMembers: Partial<User>[] = [
+        { username: $userData.username, profile_img: ''}
+    ];
 
     $: {
         while(partyMembers.length < 5){
-            partyMembers.push({username: '', email: 'X', id: 'X', profile_img: '', created_at: ''});
+            partyMembers.push({username: 'Player'});
         }
     }
-    //let res = fetch_('/api/party')
-
 
     let inQueue = false;
     let dateString = '00:00';

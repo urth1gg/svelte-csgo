@@ -2,8 +2,6 @@
     import { browser } from '$app/environment';
     import SectionHeader from '$lib/components/SectionHeader.svelte';
     import LoadableImage from '../inputs/LoadableImage.svelte';
-    import { afterUpdate } from 'svelte';
-    import { accessToken } from '$lib/store/accessToken';
     export let user: User;
     export let userLoggedIn: Partial<User> | null;
 
@@ -19,8 +17,11 @@
         kdRatio = stats.kills/stats.deaths;
     }
 
-    console.log('Profile')
-    console.log(userLoggedIn)
+    user.isFriend = {
+        status: user?.friends?.find((x: Partial<Friend>) => x.friend_id === userLoggedIn?.id)?.status,
+    }
+
+    console.log(user?.friends)
 </script>
 
 <style>
@@ -31,7 +32,13 @@
 </style>
 <div class="section w-full flex">
     <div class="w-2/12">
-        <LoadableImage src={user.profile_img} username={user.username} {userLoggedIn} />
+        <LoadableImage 
+            src={user.profile_img} 
+            username={user.username} 
+            userLoggedIn={userLoggedIn} 
+            isFriend={user.isFriend} 
+            profile={user}
+        />
     </div>
     <div class="w-8/12 ml-auto mr-auto">
         <SectionHeader title="STATS" />

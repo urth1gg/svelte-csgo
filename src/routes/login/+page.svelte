@@ -27,16 +27,16 @@
     // Implement type for data response 
     function serverErrorHappened(data: any): boolean{
         if(data?.error === 'Invalid form values.'){
-                emailErrors = data.fields.map((x: FormErrorFields ) => {
+                emailErrors = data.fields.map((x: FormErrorField ) => {
                     if(x.name === 'email'){
                         return x.message
                     }
-                }).filter((x: FormErrorFields) => x !== undefined);
-                passwordErrors = data.fields.map((x: FormErrorFields ) => {
+                }).filter((x: FormErrorField) => x !== undefined);
+                passwordErrors = data.fields.map((x: FormErrorField ) => {
                     if(x.name === 'password'){
                         return x.message
                     }
-                }).filter((x: FormErrorFields) => x !== undefined);
+                }).filter((x: FormErrorField) => x !== undefined);
         }
 
         return emailErrors.length !== 0 || passwordErrors.length !== 0;
@@ -82,7 +82,7 @@
 
 </script>
 
-<div class="flex justify-center items-center bg-custom h-screen">
+<div class="flex justify-center items-center bg-custom h-screen section">
     <div class="w-1/3 max-sm:w-2/3">
         <h1 class="text-3xl font-bold text-center text-white">Login</h1>
         <form class="mt-4" on:submit={onSubmit}>
@@ -92,7 +92,7 @@
                 </label>
                 <input bind:value={email} autofocus={true} class="{errorClassEmail} shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
                 {#each emailErrors as error}
-                    <p class="text-red-500 text-xs italic">{error}</p>
+                    <p class="italic input-error">{error}</p>
                 {/each}
             </div>
             <div class="mb-4">
@@ -101,7 +101,7 @@
                 </label>
                 <input bind:value={password} autocomplete="current-password" class="bla shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
                 {#each passwordErrors as error}
-                    <p class="text-red-500 text-xs italic">{error}</p>
+                    <p class="italic input-error">{error}</p>
                 {/each}
             </div>
             <div class="flex items-center justify-between">

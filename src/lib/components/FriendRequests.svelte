@@ -1,19 +1,30 @@
 <script lang="ts">
     import SectionHeader from "./SectionHeader.svelte"
-    import { onMount, afterUpdate } from "svelte"
+    import { beforeUpdate } from "svelte"
     import { fetch_ } from "../../utils/fetch/fetch_"
-    import { accessToken } from "$lib/store/accessToken"
-
+    import { FriendRequestStatus } from "$lib/enums/enums"
 
     let friends: User[] = [];
+
+    let loaded = false; 
 
     async function getFriends(){
         let res = await fetch_("/api/friends");
         let json = await res.json();
+        if(json.success){
+            friends = json.data.pending;
+        }
+
+        console.log(friends)
     }
     
-    afterUpdate( () => {
-        if(!lazy) getFriends();
+    beforeUpdate( () => {
+        if(!lazy && !loaded) {
+            if ( friends.length === 0) {
+                getFriends();
+            }
+            loaded = true;
+        }
     })
 
     export let lazy: boolean; 
@@ -21,6 +32,35 @@
     let lazyClass = ""
     $:{
         lazyClass = lazy ? "lazyComponent" : "";
+    }
+
+    async function onAcceptRequest(profile: Partial<User>){
+        let res = await fetch_('/api/friends', {
+            method: 'PATCH',
+            body: JSON.stringify({
+                friend: profile,
+                status: FriendRequestStatus.ACCEPTED,
+            })
+        })
+
+        let json = await res.json();
+        if(json.success){
+            getFriends()
+        }
+    }
+
+    async function onCancelRequest(profile: Partial<User>){
+        let res = await fetch_('/api/friends', {
+            method: 'DELETE',
+            body: JSON.stringify({
+                friend: profile,
+            })
+        })
+
+        let json = await res.json();
+        if(json.success){
+            getFriends();
+        }
     }
 </script>
 
@@ -45,7 +85,7 @@ button:hover{
     {:else}
         <SectionHeader title="Friend requests" />
         {#if friends.length === 0}
-            <div class="text-white">No new friend request.</div>
+            <div class="text-white">No new friend requests.</div>
         {/if}
 
         <div class='grid grid-cols-2'>
@@ -57,8 +97,8 @@ button:hover{
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button class="text-lg p-2 flex items-center">&#10003;</button>
-                <button class="text-lg p-2 flex items-center red">&#10005;</button>
+                <button class="text-lg p-2 flex items-center" on:click={() => onAcceptRequest(friend)}>&#10003;</button>
+                <button class="text-lg p-2 flex items-center red" on:click={() => onCancelRequest(friend)}>&#10005;</button>
             </div>
             {/each}
         </div>

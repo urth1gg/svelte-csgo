@@ -10,13 +10,15 @@
     --body-bg: #0079ff; 
     --section: #0088FF;
     --new-bg: #192222;
+    --new-bg-other: #192555;
     --test-color: #0079ff;
     --input-color: #0079ff;
     --input-focus-color: #1a86ff;
+    --orange: #ff7700;
 }
 
 body{
-    background-color: var(--body-bg);
+    background-color: var(--test-color);
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
@@ -53,13 +55,13 @@ input:focus{
     background-color: #1a86ff !important;
 }
 .gradient-section{
-    background-image: linear-gradient(to right, var(--section) 0%, var(--new-bg) 100%);
+    background-image: linear-gradient(45deg, var(--section) 0%, var(--new-bg-other) 100%);
     border:1px solid var(--blue-shade);
     @apply p-3;
 }
 .section{
     /*background-color: #140F0F;*/
-    background-image: linear-gradient(to right, var(--section) 0%, var(--new-bg) 100%);
+    background-image: linear-gradient(45deg, var(--section) 0%, var(--new-bg-other) 100%);
     border:1px solid var(--blue-shade);
     @apply p-3;
 }
@@ -79,12 +81,19 @@ nav{
     color: #fbff00 !important;
 }
 
+.input-error{
+    color: red !important;
+    font-weight: bold;
+    @apply text-xs;
+    -webkit-text-fill-color: red !important;
+}
+
 .btn{
-    background-color: var(--yellow);
+    background-color: var(--blue-shade);
     color: white;
     text-shadow: black 0px 0px 4px;
     transition: 0.25s all ease-out !important;
-    @apply p-2;
+    @apply p-2 text-sm;
 }
 
 .btn:hover{

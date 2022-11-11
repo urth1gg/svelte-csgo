@@ -5,6 +5,7 @@
     import Nav  from '$lib/components/Nav.svelte';
     import { fetch_ } from "../utils/fetch/fetch_";
     import { afterUpdate } from "svelte";
+	import { userData } from "$lib/store/userData";
 
     export let data;
 
@@ -36,6 +37,7 @@
         if(token !== ''){
             makePingRequest();
             let t = JSON.parse(window.atob(token.split('.')[1]));
+            userData.set(t);
             if(t.exp > Math.floor(Date.now() / 1000)) return
         }
 
