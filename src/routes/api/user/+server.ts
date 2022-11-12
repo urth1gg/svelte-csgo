@@ -1,9 +1,27 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit"
 import bcrypt from 'bcrypt'
+import * as UsersService from '$lib/services/users'
+import { InvalidToken } from '$lib/json_responses/responses'
 
 export const GET: RequestHandler = async function ({locals}){
     return new Response('Hello World!');
+}
+
+export const PATCH: RequestHandler = async function ({locals, request}){
+    let { user } = locals;
+
+    if(!user) return InvalidToken();
+
+    let body = await request.json();
+    let { username } = body;
+
+    let { data, error } = await UsersService.updateUser(user.id, {username: username}, locals.supabase);
+
+    console.log(error)
+    if(error) return json({error: error.message}, {status: 500});
+
+    return json({data: data});
 }
 
 export const POST: RequestHandler = async function ({locals, request}){
@@ -16,7 +34,6 @@ export const POST: RequestHandler = async function ({locals, request}){
         password: hash
     });
     
-    console.log(error)
     if(error?.message === 'duplicate key value violates unique constraint "users_email_key"'){
         return json({
             error: "Invalid form values.",

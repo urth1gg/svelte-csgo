@@ -122,7 +122,7 @@
                 <label class="block text-white text-sm font-bold mb-2" for="email">
                     Email
                 </label>
-                <input bind:value={email} autofocus={true} class="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none" id="email" type="text" placeholder="Email">
+                <input bind:value={email} autofocus={true} class="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none" id="email" type="text" placeholder="Email" name="email">
                 {#each emailErrors as error}
                     <p class="text-sm italic font-bold input-error">{error}</p>
                 {/each}

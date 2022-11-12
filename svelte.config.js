@@ -12,7 +12,12 @@ const config = {
 	],
 
 	kit: {
-		adapter: adapter({out: 'build'})
+		adapter: adapter({out: 'build'}),
+		alias: {
+			$components: './src/lib/components',
+			$utils: './src/utils',
+			$stores: './src/stores'
+		}
 	}
 };
 

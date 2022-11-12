@@ -24,6 +24,8 @@ export async function getUserWithAllRelatons(username: string, supabase: Supabas
 }
 
 export async function getUserById(id: string, supabase: SupabaseClient){
+    if(!id) return null;
+
     let user = await supabase.from('users').select(`
       username
     `).eq('id', id).single()
@@ -33,4 +35,11 @@ export async function getUserById(id: string, supabase: SupabaseClient){
     }
 
     return user.data as Partial<User>;
+}
+
+export async function updateUser(id: string, data: Partial<User>, supabase: SupabaseClient){
+    let { data: user, error } = await supabase.from('users').update(data).eq('id', id);
+    if(error) return {error: error};
+    
+    return {data: user};
 }

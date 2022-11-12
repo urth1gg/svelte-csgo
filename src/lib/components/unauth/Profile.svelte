@@ -21,7 +21,6 @@
         status: user?.friends?.find((x: Partial<Friend>) => x.friend_id === userLoggedIn?.id)?.status,
     }
 
-    console.log(user?.friends)
 </script>
 
 <style>

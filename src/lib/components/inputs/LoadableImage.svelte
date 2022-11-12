@@ -7,9 +7,10 @@
     export let src: string; 
     export let username: string;
     export let userLoggedIn: Partial<User> | null;
-    export let isFriend: Partial<Friend> | null;
-    export let profile: User | null;
+    export let isFriend: Partial<Friend> | null = null;
+    export let profile: User | null = null;
 
+    export let style: string | undefined = undefined;
 </script>
 
 <style>
@@ -31,7 +32,7 @@
         color: var(--white);
     }
 </style>
-<div class="w-[200px] aspect-square p-1">
+<div class="w-[200px] aspect-square p-1 {style}">
 
     {#if src}
         <img src={src} alt={profile?.username} class="object-cover" />

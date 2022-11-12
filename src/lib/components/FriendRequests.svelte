@@ -3,6 +3,8 @@
     import { beforeUpdate } from "svelte"
     import { fetch_ } from "../../utils/fetch/fetch_"
     import { FriendRequestStatus } from "$lib/enums/enums"
+    import { setMessage } from "$lib/store/pushMessage"
+	import LoadableImage from "./inputs/LoadableImage.svelte";
 
     let friends: User[] = [];
 
@@ -45,6 +47,12 @@
 
         let json = await res.json();
         if(json.success){
+
+            setMessage({
+                message: `You are now friends with ${profile.username}`,
+                type: "success"
+            })
+
             getFriends()
         }
     }
@@ -60,6 +68,10 @@
         let json = await res.json();
         if(json.success){
             getFriends();
+            setMessage({
+                message: "Friend request cancelled",
+                type: "success"
+            })
         }
     }
 </script>
@@ -92,7 +104,9 @@ button:hover{
             {#each friends as friend}
             <div class="flex flex-col">
                 <div class="flex items-center p-3">
-                    <div class="w-3 h-3 bg-green-300 rounded-full mr-2"></div> 
+                    <span>
+                        <i class="fa fa-user mr-2"/>
+                    </span> 
                     <p class="accent-color leading-none text-xl leading-5 mt-[-1px]">{friend.username}</p>
                 </div>
             </div>

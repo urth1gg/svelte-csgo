@@ -13,20 +13,31 @@ export const handle: Handle = async ({event, resolve}) => {
     }
     
     let protectedRoutes = [
-        '/api/ping',
-        '/api/friends',
-        '/api/party',
+        '/api/ping@ALL',
+        '/api/friends@ALL',
+        '/api/party@ALL',
+        '/api/user@PATCH'
     ]
     
-    if(protectedRoutes.includes(event.url.pathname)){
-        delete event.locals.user // remove user from the cookie and generate a new one with the token 
 
-        console.log(event.locals.user)
-        let token = event.request.headers.get('Authorization')?.split(" ")[1];
-        let user = decodeToken(token);
-        if(!user.id) return InvalidToken();
-        event.locals.user = user;
-        console.log(event.locals.user)
+    if(protectedRoutes.includes(
+        event.url.pathname + '@' + event.request.method 
+    ) || 
+        protectedRoutes.includes(
+            event.url.pathname + '@ALL'
+        )
+    ){
+        console.log('hit')
+        let [ _ , method ] = protectedRoutes.find(route => route.includes(event.url.pathname))?.split('@') || [];
+
+        if(method === event.request.method || method === 'ALL'){
+            delete event.locals.user // remove user from the cookie and generate a new one with the token 
+
+            let token = event.request.headers.get('Authorization')?.split(" ")[1];
+            let user = decodeToken(token);
+            if(!user.id) return InvalidToken();
+            event.locals.user = user;
+        }
 
     }
     

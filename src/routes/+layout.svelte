@@ -6,7 +6,8 @@
     import { fetch_ } from "../utils/fetch/fetch_";
     import { afterUpdate } from "svelte";
 	import { userData } from "$lib/store/userData";
-
+    import Message from "$lib/components/Message.svelte";
+    
     export let data;
 
     let { loggedIn, id, user } : { loggedIn: boolean, id: string, user: User } = data;
@@ -60,6 +61,11 @@
             if(r.error) throw new Error(r.error)
 
             accessToken.set(r.accessToken)
+
+            let t = JSON.parse(window.atob(r.accessToken.split('.')[1]));
+
+            console.log(t)
+            document.cookie = `user=${JSON.stringify(t)}; path=/; max-age=31536000; SameSite=Lax;`
         }catch(e){
             console.log(e)
         }
@@ -72,7 +78,11 @@
         refreshAccessToken()
 
     })
+
 </script>
   
-<Nav loggedIn={loggedIn} id={id} user={user}/>
-<slot loggedIn={loggedIn} id={id} />
+<main>
+    <Nav loggedIn={loggedIn} id={id} user={user}/>
+    <Message />
+    <slot loggedIn={loggedIn} id={id} user={user} />
+</main>
