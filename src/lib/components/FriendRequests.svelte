@@ -95,9 +95,8 @@ button:hover{
     {#if lazy}
         <div></div>
     {:else}
-        <SectionHeader title="Friend requests" />
         {#if friends.length === 0}
-            <div class="text-white">No new friend requests.</div>
+            <div class="text-white p-2">No new friend requests.</div>
         {/if}
 
         <div class='grid grid-cols-2'>

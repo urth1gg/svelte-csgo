@@ -20,6 +20,12 @@ declare global {
 		message: string
 	}
 
+	interface UserFlags{
+		user_id: string,
+		is_online: boolean,
+		in_game: boolean,
+		in_party: boolean,
+	}
 	interface User{
 		id: string,
 		username: string,
@@ -29,9 +35,11 @@ declare global {
 		isFriend: {
 			status: FriendRequestStatus | undefined,
 		} | null,
-		stats?: Array<Stats>,
 		party_id?: string,
-		friends?: Array<Friend>
+		stats?: Array<Stats>,
+		friends?: Array<Friend>,
+		flags?: Array<UserFlags>
+
 	}
 
 	interface Friend{

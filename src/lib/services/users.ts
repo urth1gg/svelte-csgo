@@ -43,3 +43,21 @@ export async function updateUser(id: string, data: Partial<User>, supabase: Supa
     
     return {data: user};
 }
+
+export async function searchUserByUsername(username: string, supabase: SupabaseClient){
+    let { data, error } = await supabase.from('users').select(`
+        username,
+        id,
+        stats (
+            elo
+        ),
+        flags(
+            *
+        )
+    `).ilike('username', `%${username}%`).limit(5);
+    console.log(error)
+    console.log(data)
+    if(error) return {error: error};
+    
+    return {data: data};
+}

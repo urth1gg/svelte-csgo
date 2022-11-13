@@ -15,7 +15,7 @@
     {#if lazy}
         <div></div>
     {:else}
-        <SectionHeader title="Party" />
+        <!-- <SectionHeader title="Party" /> -->
         <Party />
     {/if}
 </div>    

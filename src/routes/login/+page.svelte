@@ -1,5 +1,6 @@
 <script lang="ts">
     import { browser } from '$app/environment';
+    import { onMount, afterUpdate } from 'svelte';
 
     let emailErrors: string[] = [];
     let passwordErrors: string[] = [];
@@ -7,9 +8,19 @@
     let password = '';
     let errorClassEmail = '';
 
+
+    let emailInput: HTMLInputElement | null = null;
+    let passwordInput: HTMLInputElement | null = null;
+
+    onMount(() => {
+        if (browser) emailInput?.focus();
+
+    });
+
     $: {
         errorClassEmail = emailErrors.length > 0 ? 'border-red-500' : '';
     }
+
 
     function checkEmailErrors(email: string){
         emailErrors = [];
@@ -41,7 +52,7 @@
 
         return emailErrors.length !== 0 || passwordErrors.length !== 0;
     }
-    async function tryToLogin(){
+    async function tryToLogin(email: string, password: string){
         let res = await fetch('/api/session', {
                 method: 'POST',
                 headers: {
@@ -55,12 +66,17 @@
             })
         return res.json();
     }
+
     async function onSubmit(e: Event){
         e.preventDefault();
 
         emailErrors = []
         passwordErrors = []
 
+        let email = emailInput?.value as string;
+        let password = passwordInput?.value as string;
+        
+        console.log(password)
         let emailErrored = checkEmailErrors(email);
 
         if(!emailErrored){
@@ -69,7 +85,7 @@
 
         try{
 
-            let data = await tryToLogin();
+            let data = await tryToLogin(email, password);
             
             if(serverErrorHappened(data)) return;
 
@@ -85,12 +101,15 @@
 <div class="flex justify-center items-center bg-custom h-screen section">
     <div class="w-1/3 max-sm:w-2/3">
         <h1 class="text-3xl font-bold text-center text-white">Login</h1>
-        <form class="mt-4" on:submit={onSubmit}>
+        <form class="mt-4" on:submit={onSubmit} autocomplete="on">
             <div class="mb-4">
                 <label class="block text-white text-sm font-bold mb-2" for="email">
                     Email
                 </label>
-                <input bind:value={email} autofocus={true} class="{errorClassEmail} shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
+                <input 
+                    bind:this={emailInput}
+                    autocomplete="email"
+                    class="{errorClassEmail} shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
                 {#each emailErrors as error}
                     <p class="italic input-error">{error}</p>
                 {/each}
@@ -99,7 +118,8 @@
                 <label class="block text-white text-sm font-bold mb-2" for="password">
                     Password
                 </label>
-                <input bind:value={password} autocomplete="current-password" class="bla shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
+                <input bind:this={passwordInput}
+                    autocomplete="current-password" class="bla shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
                 {#each passwordErrors as error}
                     <p class="italic input-error">{error}</p>
                 {/each}

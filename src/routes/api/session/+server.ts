@@ -29,7 +29,7 @@ export const POST: RequestHandler = async function ({locals, request, cookies}){
         let { response, headers } = errorInvalidFormMessage(
             [
                 {name: 'password', message: 'Email and/or password is incorrect.'}
-            ], 404)
+            ], 401)
         return json(response, headers)
     }
     

@@ -7,8 +7,8 @@
     --blue-shade: #6CE1FF; 
     --yellow: #FBFF00;
     --yellow-shade: #fbff00;
-    --body-bg: #0079ff; 
-    --section: #0088FF;
+    --body-bg: #062649; 
+    --section: #0088ff;
     --new-bg: #192222;
     --new-bg-other: #192555;
     --test-color: #0079ff;
@@ -18,7 +18,7 @@
 }
 
 body{
-    background-color: var(--test-color);
+    background-color: var(--blue);
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
@@ -40,6 +40,7 @@ select:-webkit-autofill:hover{
   -webkit-text-fill-color: white;
   -webkit-box-shadow: 0 0 0px 1000px var(--input-color) inset;
   transition: background-color 5000s ease-in-out 0s;
+  caret-color: white;
 }
 
 input:-webkit-autofill:focus,
@@ -57,14 +58,12 @@ input:focus{
     background-color: #1a86ff !important;
 }
 .gradient-section{
-    background-image: linear-gradient(45deg, var(--section) 0%, var(--new-bg-other) 100%);
-    border:1px solid var(--blue-shade);
+    background-image: linear-gradient(90deg, var(--section) 0%, var(--new-bg-other) 100%);
     @apply p-3;
 }
 .section{
     /*background-color: #140F0F;*/
     background-image: linear-gradient(45deg, var(--section) 0%, var(--new-bg-other) 100%);
-    border:1px solid var(--blue-shade);
     @apply p-3;
 }
 
@@ -86,6 +85,7 @@ nav{
 .input-error{
     color: red !important;
     font-weight: bold;
+    @apply text-sm;
 }
 
 .btn{

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Searchable from "./inputs/Searchable.svelte";
+
     export let loggedIn: boolean;
     export let id: string;
     export let user: User;
@@ -34,16 +36,7 @@
                 </div>
                 <div class="hidden sm:block sm:ml-6 w-full">
                     <div class="flex space w-full">
-                        <div class="relative accent-color-shade w-[300px]">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-                                <button type="submit" class="p-1 focus:outline-none focus:shadow-outline">
-                                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-6 h-6">
-                                        <path d="M21 21l-6-6M18 10a8 8 0 11-12.73-5.73A8 8 0 0118 10z"></path>
-                                    </svg>
-                                </button>
-                            </span>
-                            <input type="search" name="q" class="py-2 input text-sm text-white bg-whitex rounded-md pl-10 pr-2 focus:outline-none focus:accent-color-shade w-full" placeholder="Search players..." autocomplete="off">
-                        </div>
+                        <Searchable />
                         {#if loggedIn}
                             <!-- svelte-ignore a11y-click-events-have-key-events -->
                             <!-- svelte-ignore a11y-missing-attribute -->

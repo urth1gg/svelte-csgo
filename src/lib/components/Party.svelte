@@ -33,6 +33,10 @@
             dateString = date_.toISOString().substr(14, 5);
         }, 1000)
     }
+
+    function partyButtonHandler(){
+
+    }
 </script>
 
 <style>
@@ -52,6 +56,19 @@
     i{
         color: var(--blue-shade)
     }
+
+
+    .cool-input:hover{
+        filter: brightness(0.9) !important;
+    }
+
+    .cool-input{
+        @apply p-2 rounded-lg font-bold text-sm;
+        margin:0 auto;
+        margin-top:2rem;
+        text-shadow: white 0px 0px 4px;
+        background-color: var(--test-color);
+    }
 </style>
 <div class="flex flex-col justify-center h-full">
     <!-- display 5 user icons in one row-->
@@ -61,10 +78,21 @@
             
             <div class="w-full aspect-square text-3xl w-full">
                 <h4 class="text-base text-center mb-4 text-[#fff] font-bold text-2xl">{player.username || "Player " + (index+1)}</h4>
-                <button class="w-full aspect-square text-3xl rounded-[20px] border-2 flex justify-center items-center flex-col">
+                {#if index === 0}
+                <button class="cool-input w-full aspect-square text-3xl 
+                    rounded-[20px] border-2 flex justify-center 
+                    items-center flex-col">
                     <i class="fa-sharp fa-solid fa-headset text-8xl"></i>
                     <i class="fa-sharp fa-solid fa-plus text-xl mt-5"></i>
                 </button>
+                {:else}
+                <button class="cool-input w-full aspect-square text-3xl 
+                    rounded-[20px] border-2 flex justify-center 
+                    items-center flex-col" on:click={partyButtonHandler}>
+                    <i class="fa-sharp fa-solid fa-headset text-8xl"></i>
+                    <i class="fa-sharp fa-solid fa-plus text-xl mt-5"></i>
+                </button>
+                {/if}
             </div>
         {/each}
     </div>

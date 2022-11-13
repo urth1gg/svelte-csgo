@@ -1,8 +1,8 @@
 import { redirect, type ServerLoadEvent } from "@sveltejs/kit";
 
-export async function load({locals, cookies}: ServerLoadEvent) {
+export async function load({locals}: ServerLoadEvent) {
 
-    if(cookies.get('user')){
+    if(locals.user){
         throw redirect(302, '/')
     }
 

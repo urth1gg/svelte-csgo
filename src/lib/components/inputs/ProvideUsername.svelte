@@ -2,7 +2,7 @@
     import { fetch_ } from "$utils/fetch/fetch_";
     import { accessToken } from "$lib/store/accessToken";
 
-    let errors: FormError[] = []
+    let error: string = "";
 
     let username = ''
     async function onSubmit(e: SubmitEvent) {
@@ -18,7 +18,7 @@
         let json = await res.json()
 
         if (json.error) {
-            errors = json.fields
+            error = json.error
         } else {
             let r = await fetch_('/api/token', {
                 method: 'PUT'
@@ -48,15 +48,15 @@
 </style>
 <div class='overlay'>
     <div class="justify-center items-center flex flex-col h-screen section">
-        <form on:submit={onSubmit}>
+        <form on:submit={onSubmit} autocomplete="off">
             <label for="username" class='text-white font-bold'>Please set username to proceed</label><br/><br/>
-            <input type="text" id="username" name="username" bind:value={username} placeholder="Username"/>
+            <input type="text" id="username" name="username_new" bind:value={username} placeholder="Username"/>
             <button class="btn btn-primary p-2" type="submit">Submit</button>
-            <div class="errors">
-                {#each errors as error}
-                    <p class="error">{error}</p>
-                {/each}
+            {#if error}
+            <div class="errors mt-1">
+                <p class="input-error">{error}</p>
             </div>
+            {/if}
         </form>
     </div>
 </div>
