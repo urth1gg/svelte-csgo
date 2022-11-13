@@ -87,7 +87,6 @@
                 return;
             }
         }catch(e: any){
-            console.log(e)
             error = true
         }
 

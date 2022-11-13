@@ -36,10 +36,11 @@
     }
 
     async function onAcceptRequest(){
+
         let res = await fetch_('/api/friends', {
             method: 'PATCH',
             body: JSON.stringify({
-                friend: profile,
+                friend: profile?.friends?.find((x: Partial<Friend>) => x.friend_id === userLoggedIn?.id),
                 status: FriendRequestStatus.ACCEPTED,
             })
         })

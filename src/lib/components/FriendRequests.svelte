@@ -4,36 +4,18 @@
     import { fetch_ } from "../../utils/fetch/fetch_"
     import { FriendRequestStatus } from "$lib/enums/enums"
     import { setMessage } from "$lib/store/pushMessage"
-	import LoadableImage from "./inputs/LoadableImage.svelte";
 
-    let friends: User[] = [];
 
+    export let lazy: boolean;
+    export let friends: Friend[] = [];
+    export let invalidate: () => void;
+    
     let loaded = false; 
 
-    async function getFriends(){
-        let res = await fetch_("/api/friends");
-        let json = await res.json();
-        if(json.success){
-            friends = json.data.pending;
-        }
-
-        console.log(friends)
-    }
-    
-    beforeUpdate( () => {
-        if(!lazy && !loaded) {
-            if ( friends.length === 0) {
-                getFriends();
-            }
-            loaded = true;
-        }
-    })
-
-    export let lazy: boolean; 
-
     let lazyClass = ""
+
     $:{
-        lazyClass = lazy ? "lazyComponent" : "";
+        lazyClass = (lazy || !friends) ? "lazyComponent" : "";
     }
 
     async function onAcceptRequest(profile: Partial<User>){
@@ -53,7 +35,7 @@
                 type: "success"
             })
 
-            getFriends()
+            invalidate()
         }
     }
 
@@ -67,13 +49,14 @@
 
         let json = await res.json();
         if(json.success){
-            getFriends();
+            invalidate();
             setMessage({
                 message: "Friend request cancelled",
                 type: "success"
             })
         }
     }
+
 </script>
 
 <style>
@@ -106,7 +89,9 @@ button:hover{
                     <span>
                         <i class="fa fa-user mr-2"/>
                     </span> 
-                    <p class="accent-color leading-none text-xl leading-5 mt-[-1px]">{friend.username}</p>
+                    <p class="accent-color leading-none text-xl leading-5 mt-[-1px]">
+                        <a data-sveltekit-reload href="/profile/{friend.friend.username}">{friend.friend.username}</a>
+                    </p>
                 </div>
             </div>
             <div class="flex items-center gap-2">

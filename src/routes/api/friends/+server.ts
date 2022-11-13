@@ -16,8 +16,15 @@ export const PATCH: RequestHandler = async function ({locals, request, cookies})
     let { user, supabase } = locals;
     let { friend, status } = await request.json();
 
-    let p1 = FriendsService.updateFriendStatus(user, friend, status);
-    let p2 = FriendsService.updateFriendStatus(friend, user as Partial<User>, status);
+    if(!user?.id) return json({error: "Not logged in"}, {status: 401});
+    if(!friend) return json({error: "No friend provided"}, {status: 400});
+    if(!status) return json({error: "No status provided"}, {status: 400});
+
+    if(friend.status === FriendRequestStatus.PENDING_FIRST_USER_REQUESTED){
+        friend.friend_id = friend.user_id;
+    }
+    let p1 = FriendsService.updateFriendStatus(user.id, friend.friend_id, status);
+    let p2 = FriendsService.updateFriendStatus(friend.friend_id, user.id, status);
 
     let promises = [ p1, p2 ];
 

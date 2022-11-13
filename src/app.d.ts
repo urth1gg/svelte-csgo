@@ -46,7 +46,9 @@ declare global {
 		id: string,
 		friend_id: string,
 		user_id: string,
-		status: FriendRequestStatus
+		status: FriendRequestStatus,
+		user: User,
+		friend: User
 	}
 
 	interface Stats {

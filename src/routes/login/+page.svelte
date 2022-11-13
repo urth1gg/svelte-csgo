@@ -76,7 +76,6 @@
         let email = emailInput?.value as string;
         let password = passwordInput?.value as string;
         
-        console.log(password)
         let emailErrored = checkEmailErrors(email);
 
         if(!emailErrored){

@@ -27,7 +27,6 @@ export const handle: Handle = async ({event, resolve}) => {
             event.url.pathname + '@ALL'
         )
     ){
-        console.log('hit')
         let [ _ , method ] = protectedRoutes.find(route => route.includes(event.url.pathname))?.split('@') || [];
 
         if(method === event.request.method || method === 'ALL'){

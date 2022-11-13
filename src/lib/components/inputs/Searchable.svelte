@@ -32,7 +32,6 @@ import { fetch_ } from "$utils/fetch/fetch_";
             let {error, data} = await res.json()
 
             if(error){
-                console.log(error)
                 return;
             } 
 

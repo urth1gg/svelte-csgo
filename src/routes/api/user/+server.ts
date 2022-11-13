@@ -40,7 +40,6 @@ export const PATCH: RequestHandler = async function ({locals, request}){
 
     let { data, error } = await UsersService.updateUser(user.id, {username: username}, locals.supabase);
 
-    console.log(error)
     if(error) return json({error: error.message}, {status: 500});
 
     return json({data: data});

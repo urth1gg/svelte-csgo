@@ -12,7 +12,13 @@ export async function getUserWithAllRelatons(username: string, supabase: Supabas
     friends!friends_user_id_fkey (
         friend_id,
         user_id,
-        status
+        status,
+        user:users!friends_user_id_fkey (
+            username
+        ),
+        friend:users!friends_friend_id_fkey (
+            username
+        )
     )
     `).eq('username', username).single()
     
@@ -55,8 +61,6 @@ export async function searchUserByUsername(username: string, supabase: SupabaseC
             *
         )
     `).ilike('username', `%${username}%`).limit(5);
-    console.log(error)
-    console.log(data)
     if(error) return {error: error};
     
     return {data: data};

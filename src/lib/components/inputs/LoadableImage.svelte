@@ -11,6 +11,7 @@
     export let profile: User | null = null;
 
     export let style: string | undefined = undefined;
+
 </script>
 
 <style>

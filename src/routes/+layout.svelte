@@ -64,10 +64,8 @@
 
             let t = JSON.parse(window.atob(r.accessToken.split('.')[1]));
 
-            console.log(t)
             document.cookie = `user=${JSON.stringify(t)}; path=/; max-age=31536000; SameSite=Lax;`
         }catch(e){
-            console.log(e)
         }
     }
 
