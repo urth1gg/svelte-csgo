@@ -39,7 +39,7 @@ export const POST: RequestHandler = async function ({locals, request, cookies}){
     let obj = {
         id: data[0].id,
         email: data[0].email,
-        username: data[0].username
+        username: data[0].username,
     }
 
     if(!match){
@@ -58,6 +58,7 @@ export const POST: RequestHandler = async function ({locals, request, cookies}){
     
     refreshTokens.set(obj.email, refreshToken)
 
+    console.log(obj)
     cookies.set('user', JSON.stringify(obj), {
         path: '/',
         maxAge: 60 * 60 * 24 * 7,

@@ -9,31 +9,23 @@ async function getFriends(user: User | undefined) {
         status,
         user:users!friends_user_id_fkey (
             id,
-            username
+            username,
+            flags(
+                is_online
+            )
         ),
         friend:users!friends_friend_id_fkey (
             id,
-            username
+            username,
+            flags(
+                is_online
+            )
         )
     `
     ).eq('user_id', user?.id).or(`status.eq.${FriendRequestStatus.ACCEPTED},status.eq.${FriendRequestStatus.PENDING_SECOND_USER_REQUESTED}`);
-
-
-    // let p2 = supabase.from('users').select(
-    //     `
-    //     id,
-    //     username,
-    //     friends!inner!friends_user_id_fkey (
-    //         friend_id,
-    //         user_id,
-    //         status,
-    //         users!inner!friends_friend_id_fkey (
-    //             username
-    //         )
-    //     )
-    // `).eq('friends.user_id', user?.id).eq('friends.status', FriendRequestStatus.PENDING_SECOND_USER_REQUESTED).then();
     
     let promises = [ p1 ];
+
     try{
         let [ p1 ] = await Promise.all(promises);
 

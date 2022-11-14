@@ -9,26 +9,18 @@
 	import { beforeUpdate, onMount } from 'svelte';
     import FriendList from '$components/friends/FriendList.svelte';
 	import { FriendRequestStatus } from '$lib/enums/enums';
+    import { userData, setFriends } from '$lib/store/userData';
 
     export let data;
 
-    let { loggedIn, id, user} : { loggedIn: boolean, id: string, user: User } = data;
+    let { loggedIn, user} : { loggedIn: boolean, id: string, user: User } = data;
 
-    let friends: Friend[] = [];
+    let friends: Friend[]  = [];
 
-    async function getFriends(){
-        let res = await fetch_("/api/friends");
-        let json = await res.json();
-        if(json.success){
-           friends = json.data;
-        }
-    }
-
-    accessToken.subscribe(async (token) => {
-        if(token){
-            await getFriends();
-        }
+    userData.subscribe( value => {
+        friends = value.friends as Friend[];
     })
+
 </script>
 
 <div class="w-full p-5 flex gap-5">
@@ -37,12 +29,11 @@
             <ProvideUsername />
         {/if}
         
-        <FriendList friends={friends.filter(x => x.status === FriendRequestStatus.ACCEPTED)} />
+        <FriendList friends={ friends ? friends.filter(x => x.status === FriendRequestStatus.ACCEPTED) : []} />
         <Queue lazy={$accessToken ? false: true }/>
         <FriendRequests lazy={$accessToken ? false: true } friends={
-            friends.filter(x => x.status !== FriendRequestStatus.ACCEPTED && 
-            x.status !== FriendRequestStatus.PENDING_FIRST_USER_REQUESTED    
-        )} invalidate={getFriends} />
+            friends ? (friends.filter(x => x.status !== FriendRequestStatus.ACCEPTED && x.status !== FriendRequestStatus.PENDING_FIRST_USER_REQUESTED)) : []} 
+            invalidate={setFriends} />
     {:else}
         <StartPlaying />
     {/if}

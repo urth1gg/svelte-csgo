@@ -25,8 +25,9 @@
 
 <style>
     .info{
-        line-height: 1.8rem;
+        line-height: 1.8em !important;
         color: white;
+        @apply text-sm;
     }
 </style>
 <div class="section w-full flex">
@@ -50,7 +51,13 @@
                 </div>
                 <div class="w-1/2">
                     <h4 class="text-base font-bold info">{user.username}</h4>
-                    <h4 class="text-base font-bold info">{user.email}</h4>
+                    <h4 class="text-base font-bold info">
+                        {#if userLoggedIn?.id === user.id}
+                            {user.email}
+                        {:else}
+                            Hidden
+                        {/if}
+                    </h4>
                     <h4 class="text-base font-bold info">{new Date(user.created_at).toLocaleDateString()}</h4>
                 </div>
             </div>

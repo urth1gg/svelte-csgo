@@ -9,7 +9,7 @@
 
     $: {
         while(partyMembers.length < 5){
-            partyMembers.push({username: 'Player'});
+            partyMembers.push({username: ''});
         }
     }
 
@@ -57,18 +57,6 @@
         color: var(--blue-shade)
     }
 
-
-    .cool-input:hover{
-        filter: brightness(0.9) !important;
-    }
-
-    .cool-input{
-        @apply p-2 rounded-lg font-bold text-sm;
-        margin:0 auto;
-        margin-top:2rem;
-        text-shadow: white 0px 0px 4px;
-        background-color: var(--test-color);
-    }
 </style>
 <div class="flex flex-col justify-center h-full">
     <!-- display 5 user icons in one row-->

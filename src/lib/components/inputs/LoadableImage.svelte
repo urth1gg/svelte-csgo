@@ -38,9 +38,9 @@
     {#if src}
         <img src={src} alt={profile?.username} class="object-cover" />
     {:else}
-        <div class="no-img w-full h-full place-items-center grid">
+        <button class="cool-input no-img w-full h-full place-items-center grid">
             <i class="fa-solid fa-user-secret"></i>
-        </div>
+        </button>
     {/if}
     {#if username}
         <h4 class="text-base mt-2 text-center text-[#fff] font-bold">{username}</h4>

@@ -5,7 +5,7 @@
     import Nav  from '$lib/components/Nav.svelte';
     import { fetch_ } from "../utils/fetch/fetch_";
     import { afterUpdate } from "svelte";
-	import { userData } from "$lib/store/userData";
+	import { userData, setFriends } from "$lib/store/userData";
     import Message from "$lib/components/Message.svelte";
     
     export let data;
@@ -13,6 +13,7 @@
     let { loggedIn, id, user } : { loggedIn: boolean, id: string, user: User } = data;
 
     let token = '';
+    
     accessToken.subscribe( value => {
         token = value;
 
@@ -38,7 +39,7 @@
         if(token !== ''){
             makePingRequest();
             let t = JSON.parse(window.atob(token.split('.')[1]));
-            userData.set(t);
+            userData.update( n => ({ ...n, ...t }));
             if(t.exp > Math.floor(Date.now() / 1000)) return
         }
 
@@ -77,10 +78,13 @@
 
     })
 
+    accessToken.subscribe( value => {
+        if(value !== '') setFriends();
+    })
 </script>
   
 <main>
-    <Nav loggedIn={loggedIn} id={id} user={user}/>
+    <Nav loggedIn={loggedIn} id={id} user={user} />
     <Message />
     <slot loggedIn={loggedIn} id={id} user={user} />
 </main>
