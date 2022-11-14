@@ -7,10 +7,19 @@
     import { afterUpdate } from "svelte";
 	import { userData, setFriends } from "$lib/store/userData";
     import Message from "$lib/components/Message.svelte";
-    
+    import FriendList from '$components/friends/FriendList.svelte';
+    import { FriendRequestStatus } from "$lib/enums/enums";
+
     export let data;
 
     let { loggedIn, id, user } : { loggedIn: boolean, id: string, user: User } = data;
+
+    
+    let friends: Friend[]  = [];
+
+    userData.subscribe( value => {
+        friends = value.friends as Friend[];
+    })
 
     let token = '';
     
@@ -86,5 +95,8 @@
 <main>
     <Nav loggedIn={loggedIn} id={id} user={user} />
     <Message />
-    <slot loggedIn={loggedIn} id={id} user={user} />
+    <div class='flex'>
+        <FriendList friends={ friends ? friends.filter(x => x.status === FriendRequestStatus.ACCEPTED) : []} />
+        <slot loggedIn={loggedIn} id={id} user={user} />
+    </div>
 </main>

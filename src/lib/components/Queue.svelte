@@ -1,7 +1,5 @@
 <script lang="ts">
-    import { userData } from '$lib/store/userData';
     import Party from "$lib/components/Party.svelte";
-	import SectionHeader from './SectionHeader.svelte';
 
     export let lazy: boolean; 
 
@@ -15,7 +13,6 @@
     {#if lazy}
         <div></div>
     {:else}
-        <!-- <SectionHeader title="Party" /> -->
         <Party />
-    {/if}
+    {/if}   
 </div>    

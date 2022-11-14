@@ -74,7 +74,7 @@ button:hover{
     filter: brightness(0.9)
 }
 </style>
-<div class="section text-white w-[300px] p-3 max-h-[200px] overflow-y-auto {lazyClass}">
+<div class="section text-white w-3/12 p-3 max-h-[200px] overflow-y-auto {lazyClass}">
     {#if lazy}
         <div></div>
     {:else}

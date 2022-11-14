@@ -8,6 +8,7 @@ let init = {
 let modals = writable(init) as Writable<Partial<ModalsState>>
 
 function toggleFriends(){
+    console.log('togglin')
     modals.update(
         n => ({...n, showFriends: !n.showFriends})
     )

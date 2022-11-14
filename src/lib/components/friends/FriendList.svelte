@@ -2,6 +2,7 @@
     import { userData } from '$lib/store/userData';
     import { onlyAcceptedFriends } from '$utils/filters/filters';
     import { modals } from '$lib/store/modals';
+    import UserDisplay from '$lib/components/user/User.svelte';
 
     let friends: Friend[] = [];
 
@@ -11,18 +12,26 @@
         }
     })
 
+    let show: boolean | undefined = false;
+
+    modals.subscribe( value => {
+        show = value.showFriends;
+    })
+
+    let widthClass: string = 'w-0';
+    $:{
+        if(show) {
+            widthClass = 'w-[300px]';
+        } else {
+            widthClass = 'hide-me';
+        }
+    }
 </script>
 
 
-{#if friends.length > 0 && $modals.showFriends}
-    <div class="w-full flex flex-col gap-2 modal-friends">
-        {#each friends as friend}
-            <div class="w-full flex flex-row gap-2 items-center">
-                <span class="text-white">
-                    {friend.friend.username}
-                </span>
-            </div>
-        {/each}
-    </div>
-{/if}
+<div class="{widthClass} flex flex-col gap-2 modal-friends section">
+    {#each friends as friend}
+        <UserDisplay user={friend.friend} />
+    {/each}
+</div>
 

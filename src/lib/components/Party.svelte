@@ -61,29 +61,32 @@
 <div class="flex flex-col justify-center h-full">
     <!-- display 5 user icons in one row-->
 
-    <div class="w-11/12 flex gap-3 justify-center items-center ml-auto mr-auto">
-        {#each partyMembers as player, index}
-            
-            <div class="w-full aspect-square text-3xl w-full">
-                <h4 class="text-base text-center mb-4 text-[#fff] font-bold text-2xl">{player.username || "Player " + (index+1)}</h4>
-                {#if index === 0}
-                <button class="cool-input w-full aspect-square text-3xl 
-                    rounded-[20px] border-2 flex justify-center 
-                    items-center flex-col">
-                    <i class="fa-sharp fa-solid fa-headset text-8xl"></i>
-                    <i class="fa-sharp fa-solid fa-plus text-xl mt-5"></i>
-                </button>
-                {:else}
-                <button class="cool-input w-full aspect-square text-3xl 
-                    rounded-[20px] border-2 flex justify-center 
-                    items-center flex-col" on:click={partyButtonHandler}>
-                    <i class="fa-sharp fa-solid fa-headset text-8xl"></i>
-                    <i class="fa-sharp fa-solid fa-plus text-xl mt-5"></i>
-                </button>
-                {/if}
-            </div>
-        {/each}
+    <div class="container__">
+        <div class="w-11/12 flex gap-3 justify-center items-center ml-auto mr-auto">
+            {#each partyMembers as player, index}
+                
+                <div class="w-full aspect-square text-3xl w-full max-w-[230px]">
+                    <h4 class="text-base text-center mb-4 text-[#fff] font-bold text-2xl">{player.username || "Player " + (index+1)}</h4>
+                    {#if index === 0}
+                    <button class="cool-input w-full aspect-square 
+                        rounded-[20px] border-2 flex justify-center 
+                        items-center flex-col">
+                        <i class="fa-sharp fa-solid fa-headset text-8xl"></i>
+                        <i class="fa-sharp fa-solid fa-plus text-xl mt-5"></i>
+                    </button>
+                    {:else}
+                    <button class="cool-input w-full aspect-square  
+                        rounded-[20px] border-2 flex justify-center 
+                        items-center flex-col" on:click={partyButtonHandler}>
+                        <i class="fa-sharp fa-solid fa-headset text-8xl"></i>
+                        <i class="fa-sharp fa-solid fa-plus text-xl mt-5"></i>
+                    </button>
+                    {/if}
+                </div>
+            {/each}
+        </div>
     </div>
+
 
     <button class="btn" on:click={onQueueClick}>{!inQueue ? 'Queue up' : dateString}</button>
 </div>

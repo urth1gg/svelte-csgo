@@ -25,7 +25,7 @@ export const POST: RequestHandler = async ({locals, request, cookies}) => {
     try{
         let verifyRT: any = jwt.verify(refreshToken, JWT_REFRESH_TOKEN_SECRET)
         
-        if(refreshToken !== refreshTokens.get(verifyRT.email)) {
+        if(refreshTokens.get(verifyRT.email) && refreshToken !== refreshTokens.get(verifyRT.email)) {
             destroyUserCookie(cookies)
             destroyRefreshTokenCookie(cookies)
             return json({error: 'Token has already been used to authenthicate you. If it was not you, contact us immediately.'}, {status: 401})

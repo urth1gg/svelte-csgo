@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { userData } from "$lib/store/userData";
-import { fetch_ } from "$utils/fetch/fetch_";
+    import UserDisplay from '$lib/components/user/User.svelte';
 
     let show: User[] = [];
 
@@ -58,33 +57,15 @@ import { fetch_ } from "$utils/fetch/fetch_";
         class="py-2 input text-sm text-white bg-whitex rounded-md pl-10 pr-2 focus:outline-none focus:accent-color-shade w-full" placeholder="Search players..." autocomplete="off">
     {#if inputValue }
         {#if show.length > 0}
-            <div class="absolute top-10 left-0 w-full bg-[var(--section)] rounded-md shadow-lg">
+            <div class="absolute top-10 left-0 w-full bg-[var(--section)] rounded-md shadow-lg z-10">
                 {#each show as user}
-                    <a data-sveltekit-reload class="flex items-center p-2 border-t border-gray-200" href="/profile/{user.username}">
-                        {#if user.profile_img}<img src={user.profile_img} class="w-8 h-8 rounded-full"/>
-                        {:else}
-                            <div class="w-8 h-8 rounded-full bg-[var(--test-color)] flex justify-center items-center">
-                                <i class="fas fa-user text-sm text-white"></i>
-                            </div>
-                        {/if}
-                        <div class="ml-2">
-                            <a data-sveltekit-reload href="/profile/{user.username}">
-                                <p class="text-sm font-bold">
-                                    {#if user.flags?.[0].is_online} 
-                                        <i class="fas fa-circle text-green-500 text-xs"></i>
-                                    {/if}
-                                    {user.username}
-                                </p>
-                            </a>
-                            <p class="text-xs text-white">ELO: {user.stats?.[0].elo}</p>
-                        </div>
-                    </a>
+                    <UserDisplay user={user}/>
                 {/each}
             </div>
         {:else}
             {#if !timeout}
             <div class='absolute top-10 left-0 w-full bg-[var(--section)] rounded-md shadow-lg p-2'>
-                <p class="text-white">No users found.</p>
+                <p class="text-white pl-1">No users found.</p>
             </div>
             {/if}
         {/if}

@@ -3,11 +3,7 @@
     import FriendRequests from '$lib/components/FriendRequests.svelte';
     import { accessToken } from '$lib/store/accessToken';
     import StartPlaying from '$lib/components/unauth/StartPlaying.svelte';
-    import { browser } from '$app/environment';
     import ProvideUsername from '$components/inputs/ProvideUsername.svelte';
-    import { fetch_ } from '$utils/fetch/fetch_';
-	import { beforeUpdate, onMount } from 'svelte';
-    import FriendList from '$components/friends/FriendList.svelte';
 	import { FriendRequestStatus } from '$lib/enums/enums';
     import { userData, setFriends } from '$lib/store/userData';
 
@@ -29,7 +25,7 @@
             <ProvideUsername />
         {/if}
         
-        <FriendList friends={ friends ? friends.filter(x => x.status === FriendRequestStatus.ACCEPTED) : []} />
+        
         <Queue lazy={$accessToken ? false: true }/>
         <FriendRequests lazy={$accessToken ? false: true } friends={
             friends ? (friends.filter(x => x.status !== FriendRequestStatus.ACCEPTED && x.status !== FriendRequestStatus.PENDING_FIRST_USER_REQUESTED)) : []} 
