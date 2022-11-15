@@ -113,7 +113,7 @@
 </div>
 
 
-<div class="flex justify-center items-center bg-custom h-screen section">
+<div class="flex justify-center items-center bg-custom h-screen section w-full">
     <div class="w-1/3 max-sm:w-2/3">
         <h1 class="text-3xl font-bold text-center text-white">Register</h1>
         <form class="mt-4" on:submit={onSubmit}>

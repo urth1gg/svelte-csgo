@@ -9,6 +9,7 @@
     import Message from "$lib/components/Message.svelte";
     import FriendList from '$components/friends/FriendList.svelte';
     import { FriendRequestStatus } from "$lib/enums/enums";
+    import PartyModal from "$components/modals/PartyModal.svelte";
 
     export let data;
 
@@ -92,6 +93,7 @@
     })
 </script>
   
+<PartyModal />
 <main>
     <Nav loggedIn={loggedIn} id={id} user={user} />
     <Message />

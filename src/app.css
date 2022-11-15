@@ -15,23 +15,27 @@
     --input-color: #0079ff;
     --input-focus-color: #1a86ff;
     --orange: #ff7700;
+    --green: #00ff77;
+    --pink: #ff0088;
+    --white: #fff;
 }
 
 body{
-    background-color: var(--blue);
+    background-image: linear-gradient(90deg, var(--section) 0%, var(--new-bg-other) 100%);
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     letter-spacing: 0.05em;
     max-width: 2400px;
     margin:0 auto;
     font-size: clamp(1rem, 1rem, 1.6rem);
+    height: 100vh;
 }
 
 h4{
-    font-size: clamp(1.03rem, 1.33vw, 1.63rem) !important;
+    font-size: clamp(1.03rem, 1.1vw, 1.63rem) !important;
 }
 
 nav a, nav button{
-    font-size: clamp(1.rem, 1.3vw, 1.6rem) !important;
+    font-size: clamp(1.rem, 1.05vw, 1.6rem) !important;
 }
 input{
     background-color: var(--input-color) !important;
@@ -75,7 +79,7 @@ input:focus{
 }
 .section{
     /*background-color: #140F0F;*/
-    background-image: linear-gradient(45deg, var(--section) 0%, var(--new-bg-other) 100%);
+    background-image: linear-gradient(90deg, var(--section) 0%, var(--new-bg-other) 100%), linear-gradient(to right, #ccc, var(--white));
     transition:all 1s linear;
     @apply p-3;
 }
@@ -175,6 +179,7 @@ input.accent-color-shade{
     width: 0px;
     height: 0px;
     padding:0;
+    margin:0;
     overflow: hidden;
 }
 
@@ -184,6 +189,12 @@ input.accent-color-shade{
 
 .user{
     color: yellow;
+    min-width: 150px;
+}
+
+.user > div:hover{
+    background-color: red !important;
+    filter:brightness(0.8);
 }
 
 .container__{
@@ -197,6 +208,7 @@ i{
 @container (max-width: 1100px) {
     i.fa-headset{
         font-size: 5rem;
+        margin-top:0.5rem;
     }
     i.fa-plus{
         font-size: 1.5rem;
@@ -211,3 +223,52 @@ i{
         font-size: 1.2rem;
     }
 }
+
+.profile .cool-input{
+    margin:0;
+}
+
+.stats-box{
+    @apply p-4 rounded-lg font-bold text-sm flex justify-center items-center text-white ;
+    background-image: linear-gradient(45deg, var(--section) 40%, var(--new-bg-other) 100%),
+        linear-gradient(to right, #ccc, var(--white));
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    padding:3px;
+    border-radius: 0 !important;
+    border: unset !important;
+
+}
+
+.section2{
+    background-image: linear-gradient(45deg, var(--section) 40%, var(--new-bg-other) 100%);
+    transition:all 1s linear;
+}
+
+
+.section3{
+    background-image: linear-gradient(90deg, var(--section) 40%, var(--new-bg-other) 100%);
+    transition:all 1s linear;
+    @apply p-3;
+}
+.input-image{
+    /* background-image: linear-gradient(var(--section), var(--section)), 
+                      linear-gradient(to right, var(--orange), var(--yellow));
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    padding:5px !important; */
+}
+
+.overlay{
+    background-color: rgba(0,0,0,0.5);
+    position: absolute;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+

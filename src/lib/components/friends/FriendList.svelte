@@ -29,7 +29,7 @@
 </script>
 
 
-<div class="{widthClass} flex flex-col gap-2 modal-friends section">
+<div class="{widthClass} flex flex-col gap-2 modal-friends section2">
     {#each friends as friend}
         <UserDisplay user={friend.friend} />
     {/each}

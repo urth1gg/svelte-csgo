@@ -66,7 +66,7 @@
                             <!-- svelte-ignore a11y-click-events-have-key-events -->
                             <!-- svelte-ignore a11y-missing-attribute -->
                             <div class="flex justify-end items-center w-full gap-1">
-                                <a href="/profile/{user.username}" class="text-white flex justify-center items-center 
+                                <a data-sveltekit-reload href="/profile/{user.username}" class="text-white flex justify-center items-center 
                                 hover:bg-gray-700 hover:text-white px-1 py-1 
                                 rounded-md text-sm font-medium">{id} <i class="fas fa-user-circle ml-2 text-2xl text-white"></i></a>
                                 <button on:click={logout} class="text-white hover:bg-gray-700 hover:text-white px-1 py-1 rounded-md text-sm font-medium">Logout</button>

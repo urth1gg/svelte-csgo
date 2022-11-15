@@ -12,6 +12,9 @@ async function getFriends(user: User | undefined) {
             username,
             flags(
                 is_online
+            ),
+            stats(
+                elo
             )
         ),
         friend:users!friends_friend_id_fkey (
@@ -19,6 +22,9 @@ async function getFriends(user: User | undefined) {
             username,
             flags(
                 is_online
+            ),
+            stats(
+                elo
             )
         )
     `

@@ -38,7 +38,7 @@
     {#if src}
         <img src={src} alt={profile?.username} class="object-cover" />
     {:else}
-        <button class="cool-input no-img w-full h-full place-items-center grid">
+        <button class="cool-input input-image no-img w-full h-full place-items-center grid">
             <i class="fa-solid fa-user-secret"></i>
         </button>
     {/if}

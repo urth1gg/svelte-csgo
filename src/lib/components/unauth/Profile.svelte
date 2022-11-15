@@ -30,8 +30,24 @@
         @apply text-sm;
     }
 </style>
-<div class="section w-full flex">
-    <div class="w-2/12">
+<div class="flex w-3/12 flex-col gap-2 mr-5">
+    <div class="stats-box flex flex-col w-[300px] h-[150px]">
+        <h4>ELO</h4>
+        <h4>{stats?.elo}</h4>
+    </div>
+
+    <div class="stats-box flex flex-col w-[300px] h-[150px]">
+        <h4>K/D</h4>
+        <h4 class="text-base font-bold info">{isNaN(kdRatio) ? '0' : kdRatio }</h4>
+    </div>
+
+    <div class="stats-box flex flex-col w-[300px] h-[150px]">
+        <h4>Win Rate</h4>
+        <h4 class="text-base font-bold info">{isNaN(winRate) ? '0' : winRate }%</h4>
+    </div>
+</div>
+<div class="section3 w-full flex">
+    <div class="w-auto profile">
         <LoadableImage 
             src={user.profile_img} 
             username={user.username} 
@@ -40,8 +56,7 @@
             profile={user}
         />
     </div>
-    <div class="w-8/12 ml-auto mr-auto">
-        <SectionHeader title="STATS" />
+    <div class="w-8/12 ml-5">
         <div class="flex flex-col gap-2">
             <div class="flex flex-row gap-2">
                 <div class="w-1/2">
@@ -65,12 +80,10 @@
                 <div class="w-1/2">
                     <h4 class="text-base font-bold info">Wins</h4>
                     <h4 class="text-base font-bold info">Losses</h4>
-                    <h4 class="text-base font-bold info">Win Rate</h4>
                 </div>
                 <div class="w-1/2">
                     <h4 class="text-base font-bold info">{stats?.wins}</h4>
                     <h4 class="text-base font-bold info">{stats?.losses}</h4>
-                    <h4 class="text-base font-bold info">{isNaN(winRate) ? '0%' : winRate + '%'}</h4>
                 </div>
             </div>
 
@@ -78,12 +91,10 @@
                 <div class="w-1/2">
                     <h4 class="text-base font-bold info">Kills</h4>
                     <h4 class="text-base font-bold info">Deaths</h4>
-                    <h4 class="text-base font-bold info">K/D Ratio</h4>
                 </div>
                 <div class="w-1/2">
                     <h4 class="text-base font-bold info">{stats?.kills}</h4>
                     <h4 class="text-base font-bold info">{stats?.deaths}</h4>
-                    <h4 class="text-base font-bold info">{isNaN(kdRatio) ? '0%' : kdRatio + '%'}</h4>
                 </div>
             </div>
         </div>

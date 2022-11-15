@@ -9,13 +9,13 @@
 
 {#if !error}
 <div class="p-5 w-full">
-    <div class="flex w-8/12">
+    <div class="flex w-12/12">
         <Profile {user} {userLoggedIn} />
     </div>
 </div>
 {:else}
 <div class="p-5 w-full">
-    <div class="flex w-8/12">
+    <div class="flex w-12/12">
         <h1 class="text-2xl font-bold text-white">User not found</h1>
     </div>
 </div>

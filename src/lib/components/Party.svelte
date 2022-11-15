@@ -1,7 +1,7 @@
 <script lang="ts">
 
     import { userData } from "$lib/store/userData";
-
+    import { modals } from "$lib/store/modals";
 
     let partyMembers: Partial<User>[] = [
         { username: $userData.username, profile_img: ''}
@@ -35,7 +35,10 @@
     }
 
     function partyButtonHandler(){
-
+        modals.update( value => {
+            value.showParty = !value.showParty;
+            return value;
+        })
     }
 </script>
 
@@ -68,7 +71,7 @@
                 <div class="w-full aspect-square text-3xl w-full max-w-[230px]">
                     <h4 class="text-base text-center mb-4 text-[#fff] font-bold text-2xl">{player.username || "Player " + (index+1)}</h4>
                     {#if index === 0}
-                    <button class="cool-input w-full aspect-square 
+                    <button class="pointer-events-none cool-input w-full aspect-square 
                         rounded-[20px] border-2 flex justify-center 
                         items-center flex-col">
                         <i class="fa-sharp fa-solid fa-headset text-8xl"></i>
