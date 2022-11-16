@@ -21,7 +21,7 @@
 }
 
 body{
-    background-image: linear-gradient(90deg, var(--section) 0%, var(--new-bg-other) 100%);
+    background-image: linear-gradient(40deg, var(--section) 0%, var(--new-bg-other) 100%);
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     letter-spacing: 0.05em;
     max-width: 2400px;
@@ -254,13 +254,13 @@ i{
 
 .section{
     /*background-color: #140F0F;*/
-    background-image: linear-gradient(90deg, var(--section) 0%, var(--new-bg-other) 100%), linear-gradient(to right, #ccc, var(--white));
+    background-image: linear-gradient(45deg, var(--section) 20%, var(--new-bg-other) 100%), linear-gradient(-45deg, var(--section), var(--new-bg-other));
     transition:all 1s linear;
     @apply p-3;
 }
 
 .section2{
-    background-image: linear-gradient(45deg, var(--section) 40%, var(--new-bg-other) 100%);
+    background-image: linear-gradient(80deg, var(--section) 0%, var(--new-bg-other) 100%);
     transition:width 1s linear;
 }
 

@@ -65,3 +65,13 @@ export async function searchUserByUsername(username: string, supabase: SupabaseC
     
     return {data: data};
 }
+
+export async function setUserPartyId(id: string, partyId: string, supabase: SupabaseClient){
+    let { data, error } = await supabase.from('users').update({
+        party_id: partyId
+    }).eq('id', id);
+
+    if(error) return {error: error};
+    
+    return {data: data};
+}

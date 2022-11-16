@@ -1,16 +1,15 @@
 <script lang="ts">
     export let user: User
     export let clickEffect: string = 'GO_TO_PROFILE';
+    export let onClick = () => {};
+
+    let hashMap = new Map();
 
 
-    function clickHandler(){
-        console.log('test')
-    }
-    console.log(clickEffect)
 </script>
 
 {#if clickEffect === 'INVITE_TO_PARTY'}
-    <button data-sveltekit-reload class="flex items-center p-2 user" on:click={clickHandler}>
+    <button data-sveltekit-reload class="flex items-center p-2 user" on:click={onClick}>
         {#if user.profile_img}<img src={user.profile_img} alt={user.username} class="w-8 h-8 rounded-full"/>
         {:else}
             <div class="w-8 h-8 rounded-full bg-[var(--test-color)] flex justify-center items-center">
@@ -29,7 +28,7 @@
                 <p class="text-xs text-white">ELO: {user.stats?.[0].elo}</p>
 
             </div>
-            <p class="text-white">Click to invite</p>
+            {#if hashMap.get(user.username)}<p class="text-white">Click to invite</p>{/if}
         </div>
     </button>
 {:else}

@@ -26,22 +26,24 @@ function toggleParty(){
 
 
 let hideModals = (e: any) => {
+    modals.update( n => ({...init }))
+    document.body.removeEventListener("click", hideModals);
+}
 
-    if(e.target.closest(".modal") === null){
-        modals.update( n => ({...init, showFriends: n.showFriends}))
-        console.log(modals)
-        document.body.removeEventListener("click", hideModals);
+let hideModalsESC = (e: any) => {
+    if(e.keyCode == 27){
+        modals.update( n => ({...init }))
+        document.body.removeEventListener("keydown", hideModalsESC);
     }
-
 }
 
 modals.subscribe( val => {
-    console.log(val)
     if(browser){
-        if(val.showParty){
+        if(val.showFriends || val.showParty){
             document.body.removeEventListener("click", hideModals);
             setTimeout( () => {
-                document.body.addEventListener("click", hideModals)
+                document.body.addEventListener("click", hideModals);
+                document.body.addEventListener('keydown', hideModalsESC);
             }, 0);
         }
     }

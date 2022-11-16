@@ -3,12 +3,13 @@
     import { onlyAcceptedFriends } from '$utils/filters/filters';
     import { modals } from '$lib/store/modals';
     import UserDisplay from '$lib/components/user/User.svelte';
+	import { fetch_ } from '$utils/fetch/fetch_';
 
     let friends: Friend[] = [];
 
     userData.subscribe( value => {
         if(value && value.friends) {
-            friends = onlyAcceptedFriends(value.friends);
+            friends = value.friends.filter(onlyAcceptedFriends)
         }
     })
 
@@ -26,6 +27,7 @@
             widthClass = 'hide-me';
         }
     }
+
 </script>
 
 
