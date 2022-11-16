@@ -152,6 +152,25 @@ input.accent-color-shade{
     background: #555;
   }
 
+  .section2::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  /* Track */
+  .section2::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  /* Handle */
+  .section2::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+  
+  /* Handle on hover */
+  .section2::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
 .cool-input:hover{
     filter: brightness(0.9) !important;
 }
@@ -170,9 +189,10 @@ input.accent-color-shade{
     text-shadow: white 0px 0px 4px;
     position: relative;
     left:0%;
-    height: --webkit-fill-available;
     top:0;
-    transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out !important;
+    max-height: 500px;
+    overflow-y: auto;
 }
 
 .hide-me{
@@ -187,14 +207,26 @@ input.accent-color-shade{
     border: unset !important;
 }
 
+.user-border{
+}
 .user{
     color: yellow;
     min-width: 150px;
+    transition: 0.5s all;
+    box-sizing: padding-box;
+    padding:0.8rem;
+    background-color: var(--new-bg-other);
 }
 
-.user > div:hover{
-    background-color: red !important;
-    filter:brightness(0.8);
+.section2:has(.user){
+    background-image: unset !important;
+    padding: unset !important;
+}
+
+.user:hover{
+    background-color: #1a86ff;
+    color: white;
+    cursor: pointer;
 }
 
 .container__{
@@ -242,13 +274,13 @@ i{
 
 .section2{
     background-image: linear-gradient(45deg, var(--section) 40%, var(--new-bg-other) 100%);
-    transition:all 1s linear;
+    transition:width 1s linear;
 }
 
 
 .section3{
     background-image: linear-gradient(90deg, var(--section) 40%, var(--new-bg-other) 100%);
-    transition:all 1s linear;
+    transition:width 1s linear;
     @apply p-3;
 }
 .input-image{
