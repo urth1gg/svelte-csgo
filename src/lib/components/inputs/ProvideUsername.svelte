@@ -49,7 +49,7 @@
 </style>
 
 <div class='overlay'>
-    <div class="justify-center items-center flex flex-col h-screen section">
+    <div class="justify-center items-center flex flex-col h-screen section w-full">
         <form on:submit={onSubmit} autocomplete="off">
             <label for="username" class='text-white font-bold'>Please set username to proceed</label><br/><br/>
             <input type="text" id="username" name="username_new" bind:value={username} placeholder="Username"/>

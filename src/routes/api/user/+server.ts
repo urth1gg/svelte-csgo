@@ -55,6 +55,7 @@ export const POST: RequestHandler = async function ({locals, request}){
         password: hash
     });
     
+    console.log(data, error)
     if(error?.message === 'duplicate key value violates unique constraint "users_email_key"'){
         return json({
             error: "Invalid form values.",

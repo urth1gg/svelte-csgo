@@ -33,7 +33,7 @@
         </div>
     </button>
 {:else}
-    <a data-sveltekit-reload class="flex items-center p-2 border-t border-gray-200 user" href="/profile/{user.username}">
+    <a data-sveltekit-reload class="flex items-center p-2 border-t border-gray-200 user-visit" href="/profile/{user.username}">
         {#if user.profile_img}<img src={user.profile_img} alt={user.username} class="w-8 h-8 rounded-full"/>
         {:else}
             <div class="w-8 h-8 rounded-full bg-[var(--test-color)] flex justify-center items-center">
