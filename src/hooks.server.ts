@@ -3,7 +3,6 @@ import { supabase } from "./utils/db/supabase";
 import { decodeToken } from "./utils/auth/decodeToken";
 import { InvalidToken } from "$lib/json_responses/responses";
 
-
 export const handle: Handle = async ({event, resolve}) => {
     let user = event.cookies.get('user') ? JSON.parse(event.cookies.get('user') || '') : null;
 
@@ -30,7 +29,7 @@ export const handle: Handle = async ({event, resolve}) => {
         let [ _ , method ] = protectedRoutes.find(route => route.includes(event.url.pathname))?.split('@') || [];
 
         if(method === event.request.method || method === 'ALL'){
-            delete event.locals.user // remove user from the cookie and generate a new one with the token 
+            event.locals.user = null; 
 
             let token = event.request.headers.get('Authorization')?.split(" ")[1];
             let user = decodeToken(token);

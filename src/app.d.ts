@@ -6,7 +6,7 @@ declare global {
 	namespace App {
 		interface Locals {
 			supabase: SupabaseClient,
-			user: User
+			user: User | null
 		}
 	}	
 	

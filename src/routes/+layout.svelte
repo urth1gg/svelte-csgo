@@ -10,6 +10,7 @@
     import FriendList from '$components/friends/FriendList.svelte';
     import { FriendRequestStatus } from "$lib/enums/enums";
     import PartyModal from "$components/modals/PartyModal.svelte";
+    import { Socket } from '../socket';
 
     export let data;
 
@@ -89,8 +90,14 @@
     })
 
     accessToken.subscribe( value => {
-        if(value !== '') setFriends();
-    })
+        if(value !== '') {
+            setFriends();
+
+        }
+    });
+
+    let instance = Socket.getInstance();
+    instance.send('hello')
 </script>
   
 <PartyModal />
