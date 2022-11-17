@@ -3,16 +3,17 @@ import { browser } from "$app/environment";
 
 let init = {
     showFriends: false,
-    showParty: false
+    showParty: false,
+    showPartyInvite: false,
 }
 
 let modals = writable({
     showFriends: false,
-    showParty: false
-}) as Writable<Partial<ModalsState>>
+    showParty: false,
+    showPartyInvite: false
+}) as Writable<ModalsState>
 
 function toggleFriends(){
-    console.log('togglin')
     modals.update(
         n => ({...n, showFriends: !n.showFriends})
     )
@@ -39,7 +40,7 @@ let hideModalsESC = (e: any) => {
 
 modals.subscribe( val => {
     if(browser){
-        if(val.showFriends || val.showParty){
+        if(val.showFriends || val.showParty || val.showPartyInvite){
             document.body.removeEventListener("click", hideModals);
             setTimeout( () => {
                 document.body.addEventListener("click", hideModals);

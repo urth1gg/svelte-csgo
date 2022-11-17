@@ -35,15 +35,15 @@ io.on("connection", (socket) => {
     socket.on("party_invite", (data) => {
         console.log('party_invite')
 
-        let { token, friendId } = data;
+        let { token, friend } = data;
 
 
         let decoded = decodeToken(token);
         if(!decoded) return;
 
-        let { id } = decoded;
 
-        console.log(id, friendId)
+        console.log(friend.friend_id);
+        sockets[friend.friend_id]?.emit('party_invite', { friend: friend.user });
     });
 
     socket.on("join", (msg) => {
@@ -67,8 +67,4 @@ io.on("connection", (socket) => {
 
 setInterval( () => {
     console.log(Object.keys(sockets))
-
-    if(sockets['99e09d1b-abcd-4d64-aa3e-ba475bb9c345']){
-        //sockets['99e09d1b-abcd-4d64-aa3e-ba475bb9c345'].send('123')
-    }
 }, 5000)

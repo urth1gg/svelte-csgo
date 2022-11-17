@@ -47,20 +47,10 @@
 
     
 
-    function onClick(friendId: string) {
-        // let r = await fetch_("/api/party", {
-        //     method: "POST",
-        //     body: JSON.stringify({
-        //         friendId
-        //     })
-        // })
-
-        //let data = await r.json();
-
-        Socket.getInstance().emit('party_invite', { token: $accessToken, friendId });
-
-        console.log('yep clicked')
+    function onClick(friend: Friend) {
+        Socket.getInstance().emit('party_invite', { token: $accessToken, friend });
     }
+
 </script>  
 
 {#if $modals.showParty}
@@ -68,7 +58,7 @@
 <div class="overlay">
         <div class="w-[300px] flex flex-col modal modal-friends section2">
             {#each friends as friend}
-                <UserDisplay user={friend.friend} clickEffect='INVITE_TO_PARTY' onClick={() => onClick(friend.friend_id)}/>
+                <UserDisplay user={friend.friend} clickEffect='INVITE_TO_PARTY' onClick={() => onClick(friend)}/>
             {/each}
         </div>
 </div>    

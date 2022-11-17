@@ -11,6 +11,7 @@
     import { FriendRequestStatus } from "$lib/enums/enums";
     import PartyModal from "$components/modals/PartyModal.svelte";
     import { Socket } from '../socket';
+    import PartyInvite from "$components/modals/PartyInvite.svelte";
 
     export let data;
 
@@ -114,6 +115,7 @@
     });
 </script>
   
+<PartyInvite />
 <PartyModal />
 <main>
     <Nav loggedIn={loggedIn} id={id} user={user} />

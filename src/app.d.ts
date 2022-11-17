@@ -65,7 +65,8 @@ declare global {
 
 	interface ModalsState{
 		showFriends: boolean,
-		showParty: boolean
+		showParty: boolean,
+		showPartyInvite: boolean,
 	}
 
 	type Nullable<T> = T | null;
