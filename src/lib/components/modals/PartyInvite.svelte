@@ -5,19 +5,25 @@
     import { Socket } from '../../../socket';
 
 
+    let invitedBy: User = {} as User;
+
     Socket.getInstance().on('party_invite', (data: any) => {
-        console.log(data);
+        invitedBy = data.friend;
+        modals.update( n => {
+            return {
+                ...n,
+                showPartyInvite: true,
+            }
+        })
     })  
+
 </script>
 
 {#if $modals.showPartyInvite}
-    <div class="overlay justify-start items-start">
-        <div class="modal party-invite flex flex-col w-[300px] section2 text-white p-3">
-
-            <h1>Party Invite</h1>
-
-            <div class='flex gap-4'>
-                <p>Test</p>
+    <div class="justify-center items-start overlay">
+        <div class="modal party-invite flex flex-col w-[500px] text-white p-3">
+            <div class='flex gap-4 section4'>
+                <UserDisplay user={invitedBy} clickEffect="PARTY_INVITE" />
                 <button on:click={() => $modals.showPartyInvite = false}>Accept</button>
                 <button on:click={() => $modals.showPartyInvite = false}>Decline</button>
             </div>

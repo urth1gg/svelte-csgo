@@ -288,7 +288,17 @@ i{
     height: 100%;
     z-index: 100;
     display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
+.user-invite{
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: none;
+    padding:0.8rem;
+    color: var(--yellow)
+}
+
+.section4{
+    background: var(--section);
+}
