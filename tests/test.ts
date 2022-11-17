@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
+import { verifyToken } from '../src/utils/auth/verifyToken';
 
-test('index page has expected h1', async ({ page }) => {
-	await page.goto('/');
-	expect(await page.textContent('h1')).toBe('Welcome to SvelteKit');
-});
+test('verify token works', async () => {
+
+})

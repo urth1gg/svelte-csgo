@@ -31,7 +31,6 @@ export const POST: RequestHandler = async ({locals, request, cookies}) => {
             return json({error: 'Token has already been used to authenthicate you. If it was not you, contact us immediately.'}, {status: 401})
         }
 
-        // Generate new tokens
         let newAccessToken = jwt.sign({email: verifyRT.email, id: verifyRT.id, username: verifyRT.username}, JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
         let newRefreshToken = jwt.sign({email: verifyRT.email, id: verifyRT.id, username: verifyRT.username}, JWT_REFRESH_TOKEN_SECRET, { expiresIn: '1d' })
 

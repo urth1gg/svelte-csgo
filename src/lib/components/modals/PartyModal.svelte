@@ -5,9 +5,11 @@
 	import { FriendRequestStatus } from '$lib/enums/enums';
     import { onlyAcceptedFriends, onlyActiveFriends  } from '$utils/filters/filters';
     import { fetch_ } from '$utils/fetch/fetch_';
-
+    import { Socket } from '../../../socket';
+    import { accessToken } from '$lib/store/accessToken';   
     let friends: Friend[]  = [];
 
+    
     // populate friends with fake data 
     for(let i = 0; i < 10; i++){
         // friends.push({
@@ -43,18 +45,21 @@
         friends = value.friends?.filter(onlyAcceptedFriends).filter(onlyActiveFriends) as Friend[];
     })
 
+    
 
-    async function onClick(friendId: string) {
-        let r = await fetch_("/api/party", {
-            method: "POST",
-            body: JSON.stringify({
-                friendId
-            })
-        })
+    function onClick(friendId: string) {
+        // let r = await fetch_("/api/party", {
+        //     method: "POST",
+        //     body: JSON.stringify({
+        //         friendId
+        //     })
+        // })
 
-        let data = await r.json();
+        //let data = await r.json();
 
-        console.log(data)
+        Socket.getInstance().emit('party_invite', { token: $accessToken, friendId });
+
+        console.log('yep clicked')
     }
 </script>  
 

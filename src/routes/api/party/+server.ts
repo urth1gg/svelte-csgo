@@ -17,8 +17,8 @@ export const POST: RequestHandler = async function ({locals, request, cookies}){
 
     if(!partyId) partyId = Math.random().toString(36).substring(2, 11);
     
-    await supabase.from('users').update({party_id: partyId}).eq('id', user?.id);
-    await supabase.from('users').update({party_id: partyId}).eq('id', friendId);
+    supabase.from('users').update({party_id: partyId}).eq('id', user?.id).then()
+    supabase.from('users').update({party_id: partyId}).eq('id', friendId).then()
     
     return Success();
 }

@@ -6,7 +6,7 @@ export class Socket {
     private socket: any
 
     private constructor() {
-        this.socket = io('ws://localhost:4000');
+        this.socket = io('ws://localhost:5000');
     }
 
     public static getInstance(): any {

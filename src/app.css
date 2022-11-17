@@ -173,6 +173,7 @@ background: var(--blue-shade);
     transition: all 0.5s ease-in-out !important;
     max-height: 500px;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .hide-me{
@@ -254,7 +255,7 @@ i{
 
 .section{
     /*background-color: #140F0F;*/
-    background-image: linear-gradient(45deg, var(--section) 20%, var(--new-bg-other) 100%), linear-gradient(-45deg, var(--section), var(--new-bg-other));
+    background-image: linear-gradient(45deg, var(--section) 20%, var(--new-bg-other) 100%);
     transition:all 1s linear;
     @apply p-3;
 }

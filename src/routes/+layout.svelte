@@ -1,10 +1,10 @@
 <script lang="ts">
     import "../app.css";
     import { browser } from '$app/environment'; 
-    import { accessToken } from '$lib/store/accessToken';
+    import { accessToken, refreshManually } from '$lib/store/accessToken';
     import Nav  from '$lib/components/Nav.svelte';
     import { fetch_ } from "../utils/fetch/fetch_";
-    import { afterUpdate } from "svelte";
+    import { afterUpdate, onMount } from "svelte";
 	import { userData, setFriends } from "$lib/store/userData";
     import Message from "$lib/components/Message.svelte";
     import FriendList from '$components/friends/FriendList.svelte';
@@ -18,18 +18,7 @@
 
     
     let friends: Friend[]  = [];
-
-    userData.subscribe( value => {
-        friends = value.friends as Friend[];
-    })
-
     let token = '';
-    
-    accessToken.subscribe( value => {
-        token = value;
-
-        if(value !== '') refreshAccessToken();
-    })
 
     function makePingRequest(){
         if(localStorage.getItem('lastPingTime')){
@@ -46,7 +35,10 @@
         }
     }
 
+    let timeout: any = null;
+
     async function refreshAccessToken(){
+
         if(token !== ''){
             makePingRequest();
             let t = JSON.parse(window.atob(token.split('.')[1]));
@@ -81,23 +73,45 @@
         }
     }
 
+
     afterUpdate(async () => {
     
         if(!browser) return;
 
         refreshAccessToken()
 
+        if(timeout) clearTimeout(timeout);
+
+        if($accessToken) {
+                timeout = setTimeout(() => {
+                refreshManually();
+            }, 1000 * 60 * 15);
+        }
+    })
+
+    accessToken.subscribe( value => {
+        token = value;
+
+        if(value !== '') refreshAccessToken();
     })
 
     accessToken.subscribe( value => {
         if(value !== '') {
             setFriends();
 
+            if(value){
+                Socket.getInstance().emit('join', { token: value });
+            }
         }
     });
 
-    let instance = Socket.getInstance();
-    instance.send('hello')
+    userData.subscribe( value => {
+        friends = value.friends as Friend[];
+    })
+    
+    Socket.getInstance().on("message", (data: any) => {
+        console.log(data);
+    });
 </script>
   
 <PartyModal />
