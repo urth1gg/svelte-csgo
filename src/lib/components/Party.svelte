@@ -2,16 +2,28 @@
 
     import { userData } from "$lib/store/userData";
     import { modals } from "$lib/store/modals";
-
+    import { Socket } from "../../socket";
+	import { fetch_ } from "$utils/fetch/fetch_";
+    import { onMount } from "svelte";
     let partyMembers: Partial<User>[] = [
-        { username: $userData.username, profile_img: ''}
     ];
 
-    $: {
+
+    onMount(async () => {
+        const res = await fetch_('/api/party');
+        const data = await res.json();
+        if(data.data) {
+            partyMembers = data.data;
+        }else{
+            partyMembers[0] = {username: $userData.username, profile_img: $userData.profile_img};
+        }
+    
         while(partyMembers.length < 5){
             partyMembers.push({username: ''});
         }
-    }
+
+        partyMembers = partyMembers.slice(0, 5);
+    })
 
     let inQueue = false;
     let dateString = '00:00';
@@ -40,6 +52,21 @@
             return value;
         })
     }
+
+    Socket.getInstance().on("party_invite_accepted", async (data: any) => {
+        const req1 = await fetch_('/api/party', {
+            method: 'POST',
+            body: JSON.stringify({
+                friendId: data.acceptedBy
+            })
+        });
+
+        const res = await fetch_('/api/party');
+        const data_ = await res.json();
+
+        if(data_.data) partyMembers = data_.data;
+
+    });
 </script>
 
 <style>

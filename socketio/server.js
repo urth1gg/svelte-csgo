@@ -59,12 +59,18 @@ io.on("connection", (socket) => {
         sockets[socket.id] = socket;
     });
 
+    socket.on('party_invite_accepted', (data) => {
+        console.log('party_invite_accepted', data);
+        let { token, friend } = data;
+        let decoded = decodeToken(token);
+        if(!decoded) return;
+
+        sockets[friend.id]?.emit('party_invite_accepted', { acceptedBy: decoded.id });
+    })
+
     socket.on('disconnect', () => {
         console.log(socket.id)
         delete sockets[socket.id];
     });
 });
 
-setInterval( () => {
-    console.log(Object.keys(sockets))
-}, 5000)

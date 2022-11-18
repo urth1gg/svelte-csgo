@@ -12,6 +12,7 @@
     import PartyModal from "$components/modals/PartyModal.svelte";
     import { Socket } from '../socket';
     import PartyInvite from "$components/modals/PartyInvite.svelte";
+    import { modals } from "$lib/store/modals";
 
     export let data;
 
@@ -20,6 +21,7 @@
     
     let friends: Friend[]  = [];
     let token = '';
+    let invitedBy: User = {} as User;
 
     function makePingRequest(){
         if(localStorage.getItem('lastPingTime')){
@@ -113,10 +115,26 @@
     Socket.getInstance().on("message", (data: any) => {
         console.log(data);
     });
+
+    Socket.getInstance().on('party_invite', (data: any) => {
+        invitedBy = data.friend;
+        modals.update( n => {
+            return {
+                ...n,
+                showPartyInvite: true,
+            }
+        })
+    });
+
 </script>
-  
-<PartyInvite />
+
+{#if $modals.showPartyInvite}
+    <PartyInvite {invitedBy} />
+{/if}
+
+
 <PartyModal />
+
 <main>
     <Nav loggedIn={loggedIn} id={id} user={user} />
     <Message />

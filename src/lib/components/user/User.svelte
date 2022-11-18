@@ -53,6 +53,7 @@
     </a>
 {:else if clickEffect === 'PARTY_INVITE'}
     <div data-sveltekit-reload class="flex items-center p-2 user-invite">
+
         {#if user.profile_img}<img src={user.profile_img} alt={user.username} class="w-8 h-8 rounded-full"/>
         {:else}
             <div class="w-8 h-8 rounded-full bg-[var(--test-color)] flex justify-center items-center">
