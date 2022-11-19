@@ -1,7 +1,7 @@
 import { supabase } from "../../utils/db/supabase";
 import { FriendRequestStatus } from '$lib/enums/enums';
 
-async function getFriends(user: User | undefined) {
+async function getFriends(user: User | null) {
     let p1 = supabase.from('friends').select(
         `
         friend_id,
@@ -10,6 +10,7 @@ async function getFriends(user: User | undefined) {
         user:users!friends_user_id_fkey (
             id,
             username,
+            party_id,
             flags(
                 is_online
             ),
@@ -20,6 +21,7 @@ async function getFriends(user: User | undefined) {
         friend:users!friends_friend_id_fkey (
             id,
             username,
+            party_id,
             flags(
                 is_online
             ),
@@ -54,7 +56,7 @@ async function updateFriendStatus(user_id: string, friend_id: string, status: Fr
     return { data, error: false }
 }
 
-async function sendFriendRequest(profile1: Partial<User> | undefined, profile2: Partial<User> | undefined, status: FriendRequestStatus){
+async function sendFriendRequest(profile1: Partial<User> | null, profile2: Partial<User> | null, status: FriendRequestStatus){
     let { data, error } = await supabase.from('friends').insert({ user_id: profile1?.id, friend_id: profile2?.id, status: status }).single();
 
     if(error){

@@ -8,11 +8,16 @@
     import { accessToken } from '$lib/store/accessToken';
 
     export let invitedBy: User = {} as User
+
     let num = 100
 
     let int: any = null; 
+    let seconds: number = 20;
+
     onMount(() => {
-        let seconds = 20;
+
+        if (int) clearInterval(int);
+        
         int = setInterval(() => {
             let dec = 100 / seconds;  
             num -= dec
@@ -32,6 +37,11 @@
         Socket.getInstance().emit('party_invite_accepted', { token: $accessToken, friend: invitedBy })
         $modals.showPartyInvite = false
     }
+
+
+    Socket.getInstance().on('party_invite', (data: any) => {
+        num = 100;
+    });
 </script>
 
 {#if $modals.showPartyInvite}

@@ -43,6 +43,7 @@
 
     userData.subscribe( value => {
         friends = value.friends?.filter(onlyAcceptedFriends).filter(onlyActiveFriends) as Friend[];
+        console.log(friends)
     })
 
     
@@ -58,7 +59,9 @@
 <div class="overlay justify-center items-center">
         <div class="w-[300px] flex flex-col modal modal-friends section2">
             {#each friends as friend}
-                <UserDisplay user={friend.friend} clickEffect='INVITE_TO_PARTY' onClick={() => onClick(friend)}/>
+                {#if !friend.friend.party_id}
+                    <UserDisplay user={friend.friend} clickEffect='INVITE_TO_PARTY' onClick={() => onClick(friend)}/>
+                {/if}
             {/each}
         </div>
 </div>    

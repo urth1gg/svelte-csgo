@@ -98,12 +98,12 @@
         if(value !== '') refreshAccessToken();
     })
 
-    accessToken.subscribe( value => {
+    accessToken.subscribe( async value => {
         if(value !== '') {
             setFriends();
 
             if(value){
-                Socket.getInstance().emit('join', { token: value });
+                await Socket.getInstance().emit('join', { token: value });
             }
         }
     });
@@ -118,12 +118,8 @@
 
     Socket.getInstance().on('party_invite', (data: any) => {
         invitedBy = data.friend;
-        modals.update( n => {
-            return {
-                ...n,
-                showPartyInvite: true,
-            }
-        })
+        $modals.showPartyInvite = false;
+        $modals.showPartyInvite = true;
     });
 
 </script>

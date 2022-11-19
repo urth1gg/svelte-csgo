@@ -8,7 +8,7 @@ export const handle: Handle = async ({event, resolve}) => {
 
     event.locals = {
         supabase: supabase,
-        user: user
+        user: user,
     }
     
     let protectedRoutes = [
@@ -35,6 +35,7 @@ export const handle: Handle = async ({event, resolve}) => {
             let user = decodeToken(token);
             if(!user.id) return InvalidToken();
             event.locals.user = user;
+            event.locals.token = token;
         }
 
     }

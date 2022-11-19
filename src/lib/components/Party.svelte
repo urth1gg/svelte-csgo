@@ -1,16 +1,17 @@
 <script lang="ts">
 
-    import { userData } from "$lib/store/userData";
+    import { setFriends, userData } from "$lib/store/userData";
     import { modals } from "$lib/store/modals";
     import { Socket } from "../../socket";
 	import { fetch_ } from "$utils/fetch/fetch_";
     import { onMount } from "svelte";
-    let partyMembers: Partial<User>[] = [
-    ];
+    let partyMembers: Partial<User>[] = [];
 
 
     onMount(async () => {
-        const res = await fetch_('/api/party');
+        const res = await fetch_('/api/party', {
+            cache: 'force-cache'
+        });
         const data = await res.json();
         if(data.data) {
             partyMembers = data.data;
@@ -53,18 +54,42 @@
         })
     }
 
-    Socket.getInstance().on("party_invite_accepted", async (data: any) => {
-        const req1 = await fetch_('/api/party', {
-            method: 'POST',
+    async function removeFromParty(username: string | undefined){
+        if(!username) return;
+
+        console.log('run')
+        let res = await fetch_('/api/party', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
-                friendId: data.acceptedBy
+                username
             })
-        });
+        })
+    }
 
-        const res = await fetch_('/api/party');
-        const data_ = await res.json();
+    Socket.getInstance().on("REFRESH_PARTY", async (data: any) => {
 
-        if(data_.data) partyMembers = data_.data;
+
+        fetch_('/api/party', {cache: 'reload'});
+        
+        partyMembers = data.partyMembers;
+
+        while(partyMembers.length < 5){
+            partyMembers.push({username: ''});
+        }
+
+        if(!data.partyMembers.find( (member: any) => member.username === $userData.username)){
+            partyMembers = [{username: $userData.username, profile_img: $userData.profile_img}];
+
+            while(partyMembers.length < 5){
+                partyMembers.push({username: ''});
+            }
+        }
+
+        partyMembers = partyMembers.slice(0, 5);
+        setFriends();
 
     });
 </script>
@@ -97,13 +122,20 @@
                 
                 <div class="w-full aspect-square text-3xl w-full max-w-[230px]">
                     <h4 class="text-base text-center mb-4 text-[#fff] font-bold text-2xl">{player.username || "Player " + (index+1)}</h4>
-                    {#if index === 0}
+                    {#if player.username === $userData.username}
                     <button class="pointer-events-none cool-input w-full aspect-square 
                         rounded-[20px] border-2 flex justify-center 
                         items-center flex-col">
                         <i class="fa-sharp fa-solid fa-headset text-8xl"></i>
                         <i class="fa-sharp fa-solid fa-plus text-xl mt-5"></i>
                     </button>
+                    {:else if player.username !== ''}
+                        <button class="cool-input w-full aspect-square  
+                            rounded-[20px] border-2 flex justify-center 
+                            items-center flex-col" on:click={() => removeFromParty(player.username)}>
+                            <i class="fa-sharp fa-solid fa-headset text-8xl"></i>
+                            <i class="fa-sharp fa-solid fa-plus text-xl mt-5"></i>
+                        </button>
                     {:else}
                     <button class="cool-input w-full aspect-square  
                         rounded-[20px] border-2 flex justify-center 
