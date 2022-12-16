@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-
+//import { JWT_ACCESS_TOKEN_SECRET } from '$env/static/private'
 if(process.argv[2] == '../.env'){
     dotenv.config({path: process.argv[2]});
 }else{

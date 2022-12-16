@@ -7,4 +7,9 @@ function InvalidToken(){
 function Success(){
     return json({success: true}, {status: 200})
 }
-export { InvalidToken, Success }
+
+function InvalidRequest(){
+    return json({error: 'Invalid request'}, {status: 400})
+}
+
+export { InvalidToken, Success, InvalidRequest }

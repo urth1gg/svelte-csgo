@@ -1,6 +1,4 @@
-POST http://localhost:5173/api/token HTTP/1.1
-content-type: application/json
+GET http://localhost:5173 HTTP/1.1
+Host: localhost:5173
 
-{
-    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRqb2xlY3M5N0BnbWFpbC5jb20iLCJpZCI6IjcwNWVkMmI4LWVjMzgtNDFkMS1iNmVmLTdkZTlkODNmMjUwNSIsImlhdCI6MTY2NzM3OTM0NiwiZXhwIjoxNjY3NDY1NzQ2fQ.Um4g3X4Edx5MdCP3uIyd-pEAbI-WgqQ-n6rSuQXfPYg"
-}
+HTTP/1.1 200 OK

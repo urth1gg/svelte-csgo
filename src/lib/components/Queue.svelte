@@ -2,6 +2,7 @@
     import Party from "$lib/components/Party.svelte";
 
     export let lazy: boolean; 
+    export let partyMembers: Partial<User>[] = [];
 
     let lazyClass = ""
     $:{
@@ -13,6 +14,6 @@
     {#if lazy}
         <div></div>
     {:else}
-        <Party />
+        <Party {partyMembers} />
     {/if}   
 </div>    

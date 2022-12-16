@@ -15,6 +15,8 @@ export const handle: Handle = async ({event, resolve}) => {
         '/api/ping@ALL',
         '/api/friends@ALL',
         '/api/party@ALL',
+        '/api/queue@ALL',
+        '/api/match@ALL',
         '/api/user@PATCH'
     ]
     

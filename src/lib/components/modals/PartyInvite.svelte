@@ -1,10 +1,9 @@
 <script lang="ts">
-    import { modals } from '$lib/store/modals';
-    import { userData } from '$lib/store/userData';
+	import SectionHeader from '$components/SectionHeader.svelte';
     import UserDisplay from '$lib/components/user/User.svelte';
+    import { modals } from '$lib/store/modals';
     import { Socket } from '../../../socket';
 	import { onDestroy, onMount } from 'svelte';
-	import SectionHeader from '$components/SectionHeader.svelte';
     import { accessToken } from '$lib/store/accessToken';
 
     export let invitedBy: User = {} as User

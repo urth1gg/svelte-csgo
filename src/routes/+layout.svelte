@@ -1,18 +1,20 @@
 <script lang="ts">
     import "../app.css";
     import { browser } from '$app/environment'; 
+    import { modals } from "$lib/store/modals";
     import { accessToken, refreshManually } from '$lib/store/accessToken';
-    import Nav  from '$lib/components/Nav.svelte';
     import { fetch_ } from "../utils/fetch/fetch_";
     import { afterUpdate, onMount } from "svelte";
-	import { userData, setFriends } from "$lib/store/userData";
+	import { userData, setFriends, setPartyMembers } from "$lib/store/userData";
+    import { FriendRequestStatus } from "$lib/enums/enums";
+    import { Socket } from '../socket';
+    import Nav  from '$lib/components/Nav.svelte';
     import Message from "$lib/components/Message.svelte";
     import FriendList from '$components/friends/FriendList.svelte';
-    import { FriendRequestStatus } from "$lib/enums/enums";
-    import PartyModal from "$components/modals/PartyModal.svelte";
-    import { Socket } from '../socket';
+    import MatchFound from "$lib/components/modals/MatchFound.svelte";
     import PartyInvite from "$components/modals/PartyInvite.svelte";
-    import { modals } from "$lib/store/modals";
+    import PartyModal from "$components/modals/PartyModal.svelte";
+    import { MatchEvents } from "$lib/socket_events/MatchEvents";
 
     export let data;
 
@@ -112,15 +114,51 @@
         friends = value.friends as Friend[];
     })
     
-    Socket.getInstance().on("message", (data: any) => {
-        console.log(data);
-    });
 
     Socket.getInstance().on('party_invite', (data: any) => {
         invitedBy = data.friend;
         $modals.showPartyInvite = false;
         $modals.showPartyInvite = true;
     });
+
+    Socket.getInstance().on("REFRESH_PARTY", async (data: any) => {
+
+        fetch_('/api/party', {cache: 'reload'});
+
+        let partyMembers = data.partyMembers;
+
+        while(partyMembers.length < 5){
+            partyMembers.push({username: ''});
+        }
+
+        if(!data.partyMembers.find( (member: any) => member.username === $userData.username)){
+            partyMembers = [{username: $userData.username, profile_img: $userData.profile_img}];
+
+            while(partyMembers.length < 5){
+                partyMembers.push({username: ''});
+            }
+        }
+
+        partyMembers = partyMembers.slice(0, 5);
+        setPartyMembers(partyMembers);
+        setFriends();
+    });
+
+    let matchId = '';
+    MatchEvents.on("MATCH_FOUND", (data: any) => {
+        $modals.showMatchFound = true;
+        matchId = data.matchId;
+    });
+
+    if(browser){
+        let cb = async function(e: any){
+            e.preventDefault();
+            await fetch_('/api/party', {cache: 'reload'});
+        }
+
+        window.removeEventListener('unload', cb);
+        window.addEventListener('unload', cb);
+    }
 
 </script>
 
@@ -129,13 +167,20 @@
 {/if}
 
 
-<PartyModal />
+{#if $modals.showMatchFound}
+    <MatchFound matchId={matchId} />
+{/if}
+
+{#if $modals.showParty}
+    <PartyModal />
+{/if}
+
 
 <main>
     <Nav loggedIn={loggedIn} id={id} user={user} />
     <Message />
     <div class='flex'>
-        <FriendList friends={ friends ? friends.filter(x => x.status === FriendRequestStatus.ACCEPTED) : []} />
+        <FriendList />
         <slot loggedIn={loggedIn} id={id} user={user} />
     </div>
 </main>

@@ -3,7 +3,8 @@
     import { userData } from "$lib/store/userData";
     import { FriendRequestStatus } from "$lib/enums/enums";
     import { toggleFriends } from "$lib/store/modals";
-
+    import { fetch_ } from "$utils/fetch/fetch_";
+    
     export let loggedIn: boolean;
     export let id: string;
     export let user: User;
@@ -19,11 +20,13 @@
     });
 
     async function logout(){
+        await fetch_('/api/party', {cache: 'reload'});
+
         await fetch('http://localhost:5173/api/session', {
             method: 'DELETE',
             credentials: 'include'
         })
-
+        
         window.location.reload()
     }
 </script>

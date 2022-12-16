@@ -105,7 +105,6 @@ nav{
     color: white;
     text-shadow: black 0px 0px 4px;
     transition: 0.25s all ease-out !important;
-    @apply px-2 py-2 rounded-md;
 }
 
 .btn:hover{
@@ -166,13 +165,13 @@ background: var(--blue-shade);
 .modal-friends{
     @apply p-2 rounded-lg font-bold text-sm w-3/12 mt-5 ml-5 mr-1;
     container-type: inline-size;
-    text-shadow: white 0px 0px 4px;
     position: relative;
     left:0%;
     top:0;
     transition: all 0.5s ease-in-out !important;
     max-height: 500px;
     overflow-y: auto;
+    max-width: 310px;
     overflow-x: hidden;
 }
 
@@ -260,6 +259,10 @@ i{
     @apply p-3;
 }
 
+
+.section5{
+    background-color: #4da1ff;
+}
 .section2{
     background-image: linear-gradient(80deg, var(--section) 0%, var(--new-bg-other) 100%);
     transition:width 1s linear;

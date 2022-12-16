@@ -2,11 +2,12 @@
 // import { createServer } from "http";
 import { Server } from "socket.io";
 // import jwt from 'jsonwebtoken'
-// import { supabase } from '$utils/db/supabase';
+//import { supabase } from '$utils/db/supabase';
 import { decodeToken } from '../src/utils/auth/decodeToken';
 import { supabase } from "../src/utils/db/supabase";
 import type * as types from '../src/app.d';
-
+import * as FriendsService from '../src/lib/services/friends';
+ 
 let sockets: any = {}
 const io = new Server(5000, {
     cors: {
@@ -14,6 +15,17 @@ const io = new Server(5000, {
         methods: ["GET", "POST"]
     }
 });
+
+
+const SocketEvents = {
+    MATCH_FOUND: 'MATCH_FOUND',
+    REFRESH_ACTIVE_MAPS: 'REFRESH_ACTIVE_MAPS',
+    MATCH_ACCEPTED: 'MATCH_ACCEPTED',
+    MATCH_REJECTED: 'MATCH_REJECTED',
+    party_invite: 'party_invite',
+    join: 'join',
+    disconnect: 'disconnect'
+} as const;
 
 io.on("connection", (socket) => {
     sockets[socket.id] = socket;
@@ -35,7 +47,6 @@ io.on("connection", (socket) => {
     });
 
     socket.on("join", async (msg) => {
-        console.log('joined', socket.id);
         let t = decodeToken(msg.token);
         
         if(!t) return;
@@ -43,9 +54,7 @@ io.on("connection", (socket) => {
         let prevId = socket.id; 
         delete sockets[prevId];
         delete sockets[t.id];
-        sockets.userId = t.id;
         sockets[t.id] = socket;
-
         let p1_ = await supabase.from('users').select('party_id').eq('id', t.id).single();
 
         if(p1_.error) return;
@@ -101,10 +110,9 @@ io.on("connection", (socket) => {
 
         let room = io.sockets.adapter.rooms.get(partyId);
 
-        console.log(io.sockets.adapter.rooms);
-        console.log(room)
         if(room){
             io.to(partyId).emit('REFRESH_PARTY', { partyId, partyMembers: partyMembers.data });
+
         }   
     })
 
@@ -115,10 +123,6 @@ io.on("connection", (socket) => {
 
         let room = io.sockets.adapter.rooms.get(partyId);
 
-        console.log(room)
-        if(room?.size === 1){
-            io.sockets.adapter.rooms.delete(partyId);
-        }
 
         let partyMembers = await supabase.from('users').select('username,email,id,party_id').eq('party_id', partyId).then();
         if(partyMembers.error){
@@ -128,13 +132,77 @@ io.on("connection", (socket) => {
 
         if(room){
             io.to(partyId).emit('REFRESH_PARTY', { partyId, partyMembers: partyMembers.data });
+            console.log(partyMembers.data)
         }
+
+        if(room?.size === 1){
+            setTimeout( () => io.sockets.adapter.rooms.delete(partyId), 3000);
+        }
+
+        console.log(io.sockets.adapter.rooms)
+        setTimeout( () => console.log(io.sockets.adapter.rooms), 4000);
  
     })
+
+    socket.on(SocketEvents.REFRESH_ACTIVE_MAPS, async data => {
+        let { token, match } = data;
+        let decoded = decodeToken(token);
+        if(!decoded) return;
+
+        let room = io.sockets.adapter.rooms.get(match.id);
+
+        if(room){
+            io.to(match.id).emit(SocketEvents.REFRESH_ACTIVE_MAPS, match.maps);
+        }
+    })
+
+    socket.on(SocketEvents.MATCH_FOUND, async data => {
+        let { match } = data;
+
+        console.log(data)
+        console.log(match)
+        let { matchId, teamA, teamB } = match; 
+
+        let allPlayers = [...teamA, ...teamB].map(x => x.id);
+
+        for(let userId in sockets){
+            let s = sockets[userId];
+            if(allPlayers.includes(userId)) s.join(matchId);
+        };
+
+
+        let room = io.sockets.adapter.rooms.get(matchId);   
+
+        if(room){
+            io.to(matchId).emit(SocketEvents.MATCH_FOUND, { matchId, teamA, teamB });
+        }
+    })
+
+    socket.on(SocketEvents.MATCH_ACCEPTED, async data => {
+
+        let { token, match } = data;
+        let decoded = decodeToken(token);
+        if(!decoded) return;
+
+        let { matchId } = match;
+
+        let room = io.sockets.adapter.rooms.get(matchId);
+
+        console.log('room is', room);
+        if(room){
+            io.to(matchId).emit(SocketEvents.MATCH_ACCEPTED, match);
+        }
+
+    });
 
     socket.on('disconnect', () => {
         console.log(socket.id)
         delete sockets[socket.id];
     });
 });
+
+
+setInterval( () => {
+    console.log(Object.keys(sockets));
+}, 10000)
 

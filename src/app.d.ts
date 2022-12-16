@@ -26,6 +26,8 @@ declare global {
 		is_online: boolean,
 		in_game: boolean,
 		in_party: boolean,
+		in_queue: boolean,
+		in_queue_timestamp: number
 	}
 	interface User{
 		id: string,
@@ -33,6 +35,7 @@ declare global {
 		email: string,
 		profile_img: string,
 		created_at: string,
+		partyMembers: Partial<User>[],
 		isFriend: {
 			status: FriendRequestStatus | undefined,
 		} | null,
@@ -68,7 +71,32 @@ declare global {
 		showFriends: boolean,
 		showParty: boolean,
 		showPartyInvite: boolean,
+		showMatchFound: boolean,
 	}
 
 	type Nullable<T> = T | null;
+
+
+    type MapName = 'de_dust2' | 'de_mirage' | 'de_inferno' | 
+    'de_nuke' | 'de_overpass' | 
+    'de_train' | 'de_vertigo' |
+    'de_anubis' | 'de_ancient' |
+    'de_cache' | 'de_cbble' |
+    'de_tuscan'
+
+    type MapImage = '/images/maps/dust2.jpg' | '/images/maps/mirage.jpg' | 
+    '/images/maps/inferno.jpg' | '/images/maps/nuke.jpg' | 
+    '/images/maps/overpass.jpg' | '/images/maps/train.jpg' |
+    '/images/maps/vertigo.jpg' | '/images/maps/anubis.jpg' |
+    '/images/maps/ancient.jpg' | '/images/maps/cache.jpg' | 
+    '/images/maps/cbble.jpg' | '/images/maps/tuscan.jpg'
+
+	type MatchesInMemory = {
+		[key: string]: Match,
+	}
+
+	type Match = {
+		maps: Map<string, string>,
+		users: Map<string, Partial<User>>,
+	}
 }

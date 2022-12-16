@@ -1,12 +1,35 @@
 <script lang="ts">
 
-    import { setFriends, userData } from "$lib/store/userData";
+    import { setFriends, userData, getUserFlags } from "$lib/store/userData";
     import { modals } from "$lib/store/modals";
     import { Socket } from "../../socket";
 	import { fetch_ } from "$utils/fetch/fetch_";
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
+    
     let partyMembers: Partial<User>[] = [];
+    let inQueue: boolean | undefined = false;
+    let dateString = '00:00';
+    let interval: NodeJS.Timeout;
 
+    userData.subscribe( n => {
+        partyMembers = n.partyMembers as Partial<User>[];
+        inQueue = n.flags?.[0].in_queue;
+
+        if (inQueue) {
+            clearInterval(interval)
+            interval = setInterval(() => {
+            let date: any = 0;
+
+            userData.subscribe( n => {
+                date = n.flags?.[0].in_queue_timestamp;
+                let elapsed = new Date().getTime() - date;
+                let date_ = new Date(elapsed);
+                dateString = date_.toISOString().substr(14, 5);
+            })
+
+        }, 1000)
+        }
+    })
 
     onMount(async () => {
         const res = await fetch_('/api/party', {
@@ -23,28 +46,43 @@
             partyMembers.push({username: ''});
         }
 
-        partyMembers = partyMembers.slice(0, 5);
+        let pm = partyMembers.slice(0, 5);
+        $userData.partyMembers = pm as Partial<User>[];
+
+        getUserFlags();
+
     })
 
-    let inQueue = false;
-    let dateString = '00:00';
-    let interval: NodeJS.Timeout;
-
-    function onQueueClick(){
+    async function onQueueClick(){
         clearInterval(interval);
 
         inQueue = !inQueue;
+
         dateString = '00:00';
 
-        if(!inQueue) return; 
+        let flags: Partial<UserFlags> = {
+            in_queue: inQueue,
+            in_queue_timestamp: inQueue ? new Date().getTime() : 0
+        } 
+        
+        await fetch_('/api/flags', {
+            method: 'POST',
+            body: JSON.stringify({
+                flags
+            })
+        });
 
-        let date = new Date().getTime(); 
+        await getUserFlags();
 
-        interval = setInterval(() => {
-            let elapsed = new Date().getTime() - date;
-            let date_ = new Date(elapsed);
-            dateString = date_.toISOString().substr(14, 5);
-        }, 1000)
+        if(inQueue){
+            await fetch_('/api/queue', {
+                method: 'POST'
+            });
+        }else{
+            await fetch_('/api/queue', {
+                method: 'DELETE'
+            });
+        }
     }
 
     function partyButtonHandler(){
@@ -69,28 +107,8 @@
         })
     }
 
-    Socket.getInstance().on("REFRESH_PARTY", async (data: any) => {
-
-
-        fetch_('/api/party', {cache: 'reload'});
-        
-        partyMembers = data.partyMembers;
-
-        while(partyMembers.length < 5){
-            partyMembers.push({username: ''});
-        }
-
-        if(!data.partyMembers.find( (member: any) => member.username === $userData.username)){
-            partyMembers = [{username: $userData.username, profile_img: $userData.profile_img}];
-
-            while(partyMembers.length < 5){
-                partyMembers.push({username: ''});
-            }
-        }
-
-        partyMembers = partyMembers.slice(0, 5);
-        setFriends();
-
+    onDestroy(() => {
+        clearInterval(interval);
     });
 </script>
 
@@ -112,6 +130,8 @@
         color: var(--blue-shade)
     }
 
+    .loading{
+    }
 </style>
 <div class="flex flex-col justify-center h-full">
     <!-- display 5 user icons in one row-->
@@ -150,5 +170,9 @@
     </div>
 
 
-    <button class="btn" on:click={onQueueClick}>{!inQueue ? 'Queue up' : dateString}</button>
+    {#if $userData.flags } 
+        <button class="btn" on:click={onQueueClick}>{!inQueue ? 'Queue up' : dateString}</button>
+    {:else}
+        <button class="btn loading" disabled>Queue up</button>
+    {/if}
 </div>

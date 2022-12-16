@@ -5,12 +5,14 @@ let init = {
     showFriends: false,
     showParty: false,
     showPartyInvite: false,
+    showMatchFound: false
 }
 
 let modals = writable({
     showFriends: false,
     showParty: false,
-    showPartyInvite: false
+    showPartyInvite: false,
+    showMatchFound: false
 }) as Writable<ModalsState>
 
 function toggleFriends(){
@@ -40,7 +42,7 @@ let hideModalsESC = (e: any) => {
 
 modals.subscribe( val => {
     if(browser){
-        if(val.showFriends || val.showParty || val.showPartyInvite){
+        if(val.showParty || val.showPartyInvite){
             document.body.removeEventListener("click", hideModals);
             setTimeout( () => {
                 document.body.addEventListener("click", hideModals);

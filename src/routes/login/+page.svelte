@@ -1,6 +1,6 @@
 <script lang="ts">
     import { browser } from '$app/environment';
-    import { onMount, afterUpdate } from 'svelte';
+    import { onMount } from 'svelte';
 
     let emailErrors: string[] = [];
     let passwordErrors: string[] = [];
@@ -64,7 +64,10 @@
                     password
                 })
             })
-        return res.json();
+
+        let data = await res.json();
+
+        return data;
     }
 
     async function onSubmit(e: Event){
@@ -88,6 +91,18 @@
             
             if(serverErrorHappened(data)) return;
 
+            if(data.accessToken){
+
+                let headers = new Headers();
+                headers.append('Authorization', `Bearer ${data.accessToken}`)
+                headers.append('Content-Type', 'application/json')
+
+                await fetch('http://localhost:5173/api/party', {
+                    cache:'reload',
+                    headers: headers,
+                    credentials: 'include',
+                })
+            }
             redirect('/');
         }catch(e){
             passwordErrors = ["Something went wrong, please try again later"]

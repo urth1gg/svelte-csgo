@@ -2,11 +2,10 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { json } from "@sveltejs/kit"
 import bcrypt from 'bcrypt'
 import * as UsersService from '$lib/services/users'
-import { InvalidToken, Success } from '$lib/json_responses/responses'
+import { InvalidToken } from '$lib/json_responses/responses'
 
 export const GET: RequestHandler = async function ({locals, request}){
     
-    // get params from the get type request 
     let params: any = new URLSearchParams(request.url.split('?')[1]);
     
     let users = await UsersService.searchUserByUsername(params.get('query'), locals.supabase)
@@ -55,7 +54,6 @@ export const POST: RequestHandler = async function ({locals, request}){
         password: hash
     });
     
-    console.log(data, error)
     if(error?.message === 'duplicate key value violates unique constraint "users_email_key"'){
         return json({
             error: "Invalid form values.",
