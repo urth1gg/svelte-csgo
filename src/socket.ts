@@ -6,7 +6,6 @@ export class Socket {
     private static instance: Socket;
     private socket: any;
 
-    public static MatchEvents = MatchEvents;
     private constructor() {
         this.socket = io('ws://localhost:5000');
     }

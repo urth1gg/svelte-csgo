@@ -95,8 +95,7 @@
     async function removeFromParty(username: string | undefined){
         if(!username) return;
 
-        console.log('run')
-        let res = await fetch_('/api/party', {
+        await fetch_('/api/party', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'

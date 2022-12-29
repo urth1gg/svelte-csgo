@@ -28,7 +28,6 @@ export const POST: RequestHandler = async function ({locals, request}){
 
     let { data, error } = await FlagsService.setUserFlags(user, flags, locals.supabase);
 
-    console.log(data, error)
     if(error) return json({error: error.message}, {status: 500});
 
     return json({data: data});

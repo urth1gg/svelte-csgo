@@ -10,7 +10,6 @@ describe("Create large quantity of matches with randomized data and make sure th
   for(let i = 0; i < 1000; i++){
     let randomElo = Math.floor(Math.random() * 3000);
     let randomUsername = Math.random().toString(36).substring(2);
-    console.log(randomUsername)
     let randomPlayer = new matchMaking.Player(randomUsername, randomElo);
     queue.addToMatch(randomPlayer);
   }
@@ -65,7 +64,6 @@ function eloDifferenceBetweenTeams(match: any){
     teamBElo += player.elo;
   })
   let difference = Math.abs(teamAElo - teamBElo);
-  console.log(difference)
   return difference;
 }
 describe("matchMaking start", () => {
@@ -76,6 +74,7 @@ describe("matchMaking start", () => {
       id: "manual",
       elo: 1000,
       enteredMatchId: null,
+      acceptedMatch: false,
     };
 
     assert.deepEqual(player1, expectedPlayer);
@@ -99,10 +98,11 @@ describe("matchMaking start", () => {
       matches: [
         {
           matchId: enteredMatchId,
-          teamA: [{ id: "manual", elo: 1000, enteredMatchId: enteredMatchId }],
+          teamA: [{ id: "manual", elo: 1000, enteredMatchId: enteredMatchId, acceptedMatch: false }],
           teamB: [],
           eloBound: 150,
           expansionTime: 180000,
+
         },
       ],
     });

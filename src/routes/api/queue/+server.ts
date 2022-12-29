@@ -2,10 +2,8 @@ import { Success, InvalidRequest } from "$lib/json_responses/responses";
 import type { RequestHandler } from "@sveltejs/kit";
 import { initMapsForMatch, removeMapFromMatch } from "$lib/services/matches";
 import { Socket } from "$lib/../socket";
-import { Player, Match, Queue, playingMatches } from "$lib/services/matchMaking";
+import { Player, Match, newQueue as queue, playingMatches } from "$lib/services/matchMaking";
 import { MatchEvents } from "$lib/socket_events/MatchEvents";
-
-let queue = new Queue();
 
 const matchWithTenPlayersLoaded = (x: any) => {
     MatchEvents.emit('MATCH_FOUND', {match:x});
@@ -23,11 +21,8 @@ export const POST: RequestHandler = async function ({locals}){
 
     
     if(!user){
-        console.log('inv')
         return InvalidRequest()
     }
-    console.log(user.id);
-
     
     let { data, error } = await supabase.from('users').select(`
         *, 
@@ -45,12 +40,6 @@ export const POST: RequestHandler = async function ({locals}){
 
     if(!partyId) {
         let player = new Player(user.id, data.stats?.[0].elo);
-        for(let i = 0; i < 9; i++){
-            let randomElo = Math.floor(Math.random() * 150);
-            let randomUsername = Math.random().toString(36).substring(7);
-            let randomPlayer = new Player(randomUsername, randomElo);
-            queue.addToMatch(randomPlayer);
-        }
         queue.addToMatch(player);
     }
     return Success()
@@ -84,7 +73,7 @@ export const DELETE: RequestHandler = async function ({locals, request, params})
     let partyId = data?.party_id;
 
     if(!partyId) {
-        let player = new Player(user.username, data.stats?.[0].elo);
+        let player = new Player(user.id, data.stats?.[0].elo);
 
         queue.removeFromMatch(player);
 

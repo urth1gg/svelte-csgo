@@ -1,3 +1,126 @@
+import { MatchEvents } from "$lib/socket_events/MatchEvents";
+import { decodeToken } from "$lib/../utils/auth/decodeToken";
+import { initMapsForMatch, createMatch } from "./matches";
+import { supabase } from "$utils/db/supabase";
+
+MatchEvents.on('UPDATE_PLAYERS', (data: any) => {
+  let { matchId, teamA, teamB, token } = data;
+
+  let decoded = decodeToken(token) as any;
+  if(!decoded) return;
+  if(!decoded.admin) return;
+
+  playingMatches.matches.map((x:any) => {
+      if(x.matchId === matchId){
+          x.teamA = teamA;
+          x.teamB = teamB;
+      }
+      return x;
+  })
+});
+
+MatchEvents.on('REMOVE_FROM_PLAYING_MATCHES', (data: any) => {
+  let { matchId, teamA, teamB, token } = data;
+
+  let decoded = decodeToken(token) as any;
+  if(!decoded) return;
+  if(!decoded.admin) return;
+
+  let match = playingMatches.matches.find((x:any) => x.matchId === matchId);
+
+  if(!match) return;
+
+  let allPlayers = [...match.teamA, ...match.teamB];
+
+  if(allPlayers.every((x:any) => x.acceptedMatch === true)){
+      return;
+  }
+
+  playingMatches.matches = playingMatches.matches.filter((x:any) => x.matchId !== matchId);
+
+
+  let m = new Match(match.matchId, [...teamA], [...teamB], match.eloBound, match.expansionTime)
+  m.teamA = teamA 
+  m.teamB = teamB
+
+  newQueue.matches.push(
+    m
+  );
+
+});
+
+MatchEvents.on("START_MATCH", (data: any) => {
+  let { matchId, token } = data;
+  let matchIndex = playingMatches.matches.findIndex((x: any) => x.matchId === matchId);
+
+  let decoded = decodeToken(token) as any;
+  console.log(decoded)
+  if(!decoded) return;
+  if(!decoded.admin) return;
+  if(matchIndex === -1) return;
+
+  initMapsForMatch(playingMatches.matches[matchIndex]);
+
+
+});
+
+MatchEvents.on("CREATE_MATCH", (data: any) => {
+  let { matchId, token } = data;
+  let matchIndex = playingMatches.matches.findIndex((x: any) => x.matchId === matchId);
+
+  let decoded = decodeToken(token) as any;
+  if(!decoded) return;
+  if(!decoded.admin) return;
+
+  if(matchIndex === -1) return;
+
+  let match = playingMatches.matches[matchIndex];
+
+  console.log(match)
+  let mapsArray = [...match.maps];
+
+  let randomMap = mapsArray[Math.floor(Math.random() * mapsArray.length)];
+
+  match.maps.clear() 
+  match.maps.set(randomMap[0], randomMap[1]);
+
+
+  createMatch(match, supabase, randomMap[0]);
+});
+
+function checkIfMatchIsReady(match: any){
+  if(!match) return false;
+
+  let { teamA, teamB } = match;
+
+
+  if(teamA.length === 5 && teamB.length === 5){
+    const dividedTeam = greedyPartitioning(teamA, teamB);
+    teamA = dividedTeam[0];
+    teamB = dividedTeam[1];
+
+    // print elo of teamA and teamB 
+
+    let teamAElo = 0;
+    let teamBElo = 0;
+
+    teamA.map((p: any) => {
+      teamAElo += p.elo;
+      return NaN;
+    });
+    teamB.map((p: any) => {
+      teamBElo += p.elo;
+      return NaN;
+    });
+
+    match.teamA = teamA;
+    match.teamB = teamB;
+    removeMatchFromQueue(match);
+    return true;
+  }
+
+  return false;
+}
 //------------------------
 // PLAYER CLASS
 //------------------------
@@ -25,12 +148,12 @@ class Player {
     eloBound: number;
     expansionTime: number;
 
-    constructor(matchId: any, teamA: any = [], teamB: any = []) {
+    constructor(matchId: any, teamA: any = [], teamB: any = [], eloBound = 150, expansionTime = 180000) {
       this.matchId = matchId;
       this.teamA = [];
       this.teamB = [];
-      this.eloBound = 150;
-      this.expansionTime = 180000;
+      this.eloBound = eloBound;
+      this.expansionTime = expansionTime;
       this.changeEloBound();
     }
   
@@ -43,6 +166,7 @@ class Player {
   
     // ADD PLAYER TO MATCH METHOD
     addPlayer(player: any, enteredMatchId: any) {
+
       if (this.teamA.length >= 5 && this.teamB.length >= 5) return false;
       let lowElo: number = 0;
       let highElo: number = 0;
@@ -122,27 +246,6 @@ class Player {
           this.teamB.push(player);
           player.enteredMatchId = this.teamA[0].enteredMatchId;
           // IF TEAM-B IS FULL WHICH MEANS 10 PALYER ADDED IN THE MATCH. NOW REMOVE THE MATCH FROM GAME QUEUE
-          if (this.teamB.length === 5) {
-            const dividedTeam = greedyPartitioning(this.teamA, this.teamB);
-            this.teamA = dividedTeam[0];
-            this.teamB = dividedTeam[1];
-
-            // print elo of teamA and teamB 
-
-            let teamAElo = 0;
-            let teamBElo = 0;
-
-            this.teamA.map((p) => {
-              teamAElo += p.elo;
-              return NaN;
-            });
-            this.teamB.map((p) => {
-              teamBElo += p.elo;
-              return NaN;
-            });
-
-            removeMatchFromQueue(this);
-          }
           return true;
         }
       }
@@ -176,6 +279,7 @@ class Player {
           const added = this.matches[i].addPlayer(player);
           if (added) {
             foundMatch = true;
+            checkIfMatchIsReady(this.matches[i]);
             break;
           }
         }
@@ -217,7 +321,7 @@ class Player {
   // FUNCTION FOR CREATE RANDOM ID FOR MATCHES
   //------------------------
   function createMatchId() {
-    return Math.floor(100000 + Math.random() * 9000000000);
+    return Math.floor(100000 + Math.random() * 9000000000).toString();
   }
   
   //------------------------
@@ -242,6 +346,7 @@ class Player {
   // CURRENTLY PLAYING MATCHES
   //------------------------
   let playingMatches = {
+    matches: [] as any[],
     subscribers: [] as { fn: Function; key: string }[],
     subscribe: (fn: Function) => {
       let key = fn.name
@@ -259,16 +364,18 @@ class Player {
     },
     notify: (data: any) => {
       playingMatches.subscribers.forEach((subscriber) => subscriber.fn(data));
-    }
+    },
   };
   
   //------------------------
   // FUNCTION TO REMOVE MATCH FROM QUEUE WHEN A CURRENT MATCH IS BEING FULLED
   //------------------------
   function removeMatchFromQueue(match: any) {
-    let matches = newQueue.matches.filter((m) => m.matchId !== match.matchId);
+
+    let matches = newQueue.matches.filter((m: any) => m.matchId !== match.matchId);
     newQueue.matches = matches;
     playingMatches.notify(match);
+    playingMatches.matches.push(match);
   }
   
   //------------------------
@@ -315,11 +422,24 @@ class Player {
   }
   
   
-  export {
-    Player,
-    Match,
-    Queue,
-    greedyPartitioning,
-    playingMatches,
-  };
+
+let queue = newQueue;
+if(queue.matches.length === 0){
+  for(let i = 0; i < 9; i++){
+      let randomElo = Math.floor(Math.random() * 150);
+      let randomUsername = Math.random().toString(36).substring(7);
+      let randomPlayer = new Player(randomUsername, randomElo);
+      randomPlayer.acceptedMatch = true;
+      queue.addToMatch(randomPlayer);
+  }
+}
+
+export {
+  Player,
+  Match,
+  newQueue,
+  greedyPartitioning,
+  playingMatches,
+  Queue
+};
   

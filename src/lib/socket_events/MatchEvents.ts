@@ -4,6 +4,12 @@ import { Socket as SocketSingleton } from "$lib/../socket";
 type MatchSubscriptions = {
     MATCH_FOUND: string
     MATCH_ACCEPTED: string
+    MATCH_DECLINED: string
+    UPDATE_PLAYERS: string
+    REMOVE_FROM_PLAYING_MATCHES: string
+    START_MATCH: string
+    REFRESH_ACTIVE_MAPS: string
+    CREATE_MATCH: string
 }
 
 type MatchEmitters = {
@@ -11,6 +17,8 @@ type MatchEmitters = {
     MATCH_ACCEPTED: string
     MATCH_REJECTED: string
     MATCH_FOUND: string
+    MATCH_DECLINED: string
+    CREATE_MATCH: string
 }
 
 class MatchEvents{

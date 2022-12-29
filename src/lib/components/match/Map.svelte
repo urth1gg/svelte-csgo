@@ -6,34 +6,22 @@
     export let mapImage: MapImage;
 
 
-    let allowedToBan = false;
+    export let mapBanned = true;
+    export let userVoted = false;
     function banMap(mapName: MapName) {
+        if(mapBanned) return;
+        if(userVoted) return;
+
         fetch_(`/api/match/${$page.params.matchId}/maps`, {
             method: 'DELETE',
             body: JSON.stringify({
-                mapName
+                map_id: mapName
             })
         })
     }
 
-    let matchMaps = []; 
 
-    async function getMaps() {
-        if(matchMaps.length !== 0) return; 
 
-        let data = await fetch_(`/api/match/${$page.params.matchId}/maps`, {
-            method: 'GET',
-        })
-        let json = await data.json();
-        matchMaps = json.data;
-    }
-
-    $:{
-        (async function(){
-            if(matchMaps.length !== 0) return;
-            await getMaps();
-        })();
-    }
 </script>
 
 <style>
@@ -57,12 +45,17 @@
     .bla{
         background:var(--primary);
     }
-    .map__container--unclickable{
+    .map__container--banned{
         cursor: not-allowed;
         pointer-events: none;
+        filter: grayscale(40%);
+    }
+
+    .map__container--already-voted{
+        cursor: not-allowed;
     }
 </style>
-<button class="flex flex-row w-3/12 p-1 justify-between items-center map__container {!allowedToBan ? 'map__container--unclickable' : ''}" on:click={ () => banMap(mapName) }>
+<button class="{userVoted ? 'map__container--already-voted' : ''} flex flex-row w-3/12 p-1 justify-between items-center map__container {mapBanned ? 'map__container--banned' : ''}" on:click={ () => banMap(mapName) }>
     <p class="">{mapName}</p>
     <img src={mapImage} alt={mapName} />
 </button>

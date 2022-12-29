@@ -14,6 +14,6 @@
     {#if lazy}
         <div></div>
     {:else}
-        <Party {partyMembers} />
+        <Party  />
     {/if}   
 </div>    

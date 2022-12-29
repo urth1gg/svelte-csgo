@@ -5,7 +5,7 @@
     import { accessToken, refreshManually } from '$lib/store/accessToken';
     import { fetch_ } from "../utils/fetch/fetch_";
     import { afterUpdate, onMount } from "svelte";
-	import { userData, setFriends, setPartyMembers } from "$lib/store/userData";
+	import { userData, setFriends, setPartyMembers, getUserFlags } from "$lib/store/userData";
     import { FriendRequestStatus } from "$lib/enums/enums";
     import { Socket } from '../socket';
     import Nav  from '$lib/components/Nav.svelte';
@@ -92,6 +92,11 @@
                 refreshManually();
             }, 1000 * 60 * 15);
         }
+
+        if(localStorage.getItem('MATCH_FOUND')){
+            $modals.showMatchFound = true;
+            matchId = localStorage.getItem('MATCH_FOUND') ?? '';
+        }
     })
 
     accessToken.subscribe( value => {
@@ -148,6 +153,7 @@
     MatchEvents.on("MATCH_FOUND", (data: any) => {
         $modals.showMatchFound = true;
         matchId = data.matchId;
+        localStorage.setItem('MATCH_FOUND', matchId);
     });
 
     if(browser){
@@ -160,6 +166,35 @@
         window.addEventListener('unload', cb);
     }
 
+    MatchEvents.on("MATCH_DECLINED", async () => {
+        let flags: Partial<UserFlags> = {
+            in_queue: false,
+            in_queue_timestamp:0
+        } 
+        
+        
+        if(browser) { localStorage.removeItem('MATCH_FOUND') }
+
+        await fetch_('/api/flags', {
+            method: 'POST',
+            body: JSON.stringify({
+                flags
+            })
+        });
+
+        await fetch_('/api/queue', {
+            method: 'DELETE'
+        });
+
+        await getUserFlags();
+    });
+
+    MatchEvents.on("START_MATCH", async (data: any) => {
+        if(browser) {
+            localStorage.removeItem('MATCH_FOUND');
+            document.location.pathname = `/match/${data.matchId}`;        
+        }
+    });
 </script>
 
 {#if $modals.showPartyInvite}

@@ -58,7 +58,6 @@ export const POST: RequestHandler = async function ({locals, request, cookies}){
     
     refreshTokens.set(obj.email, refreshToken)
 
-    console.log(obj)
     cookies.set('user', JSON.stringify(obj), {
         path: '/',
         maxAge: 60 * 60 * 24 * 7,

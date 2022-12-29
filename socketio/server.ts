@@ -4,10 +4,14 @@ import { Server } from "socket.io";
 // import jwt from 'jsonwebtoken'
 //import { supabase } from '$utils/db/supabase';
 import { decodeToken } from '../src/utils/auth/decodeToken';
+import { signToken } from '../src/utils/auth/signToken';
 import { supabase } from "../src/utils/db/supabase";
 import type * as types from '../src/app.d';
 import * as FriendsService from '../src/lib/services/friends';
- 
+import dotenv from 'dotenv';
+
+
+
 let sockets: any = {}
 const io = new Server(5000, {
     cors: {
@@ -16,16 +20,24 @@ const io = new Server(5000, {
     }
 });
 
+let matches: any = {} 
 
 const SocketEvents = {
     MATCH_FOUND: 'MATCH_FOUND',
     REFRESH_ACTIVE_MAPS: 'REFRESH_ACTIVE_MAPS',
     MATCH_ACCEPTED: 'MATCH_ACCEPTED',
     MATCH_REJECTED: 'MATCH_REJECTED',
+    MATCH_DECLINED: 'MATCH_DECLINED',
+    UPDATE_PLAYERS: 'UPDATE_PLAYERS',
+    REMOVE_FROM_PLAYING_MATCHES: 'REMOVE_FROM_PLAYING_MATCHES',
+    START_MATCH: 'START_MATCH',
+    SELECT_RANDOM_MAP: 'SELECT_RANDOM_MAP',
+    CREATE_MATCH: 'CREATE_MATCH',
     party_invite: 'party_invite',
     join: 'join',
     disconnect: 'disconnect'
 } as const;
+
 
 io.on("connection", (socket) => {
     sockets[socket.id] = socket;
@@ -139,7 +151,6 @@ io.on("connection", (socket) => {
             setTimeout( () => io.sockets.adapter.rooms.delete(partyId), 3000);
         }
 
-        console.log(io.sockets.adapter.rooms)
         setTimeout( () => console.log(io.sockets.adapter.rooms), 4000);
  
     })
@@ -149,60 +160,170 @@ io.on("connection", (socket) => {
         let decoded = decodeToken(token);
         if(!decoded) return;
 
-        let room = io.sockets.adapter.rooms.get(match.id);
+        let allPlayers = [...match.teamA, ...match.teamB].map(x => x.id);
 
-        if(room){
-            io.to(match.id).emit(SocketEvents.REFRESH_ACTIVE_MAPS, match.maps);
-        }
+        for(let userId in sockets){
+            let s = sockets[userId];
+
+            if(allPlayers.includes(userId)) {
+                s.emit(SocketEvents.REFRESH_ACTIVE_MAPS, { match });
+            }
+        };
+
     })
 
     socket.on(SocketEvents.MATCH_FOUND, async data => {
         let { match } = data;
 
-        console.log(data)
-        console.log(match)
+        
         let { matchId, teamA, teamB } = match; 
+
 
         let allPlayers = [...teamA, ...teamB].map(x => x.id);
 
+        let matchIdAsAString = matchId.toString();
         for(let userId in sockets){
             let s = sockets[userId];
-            if(allPlayers.includes(userId)) s.join(matchId);
+            if(allPlayers.includes(userId)) {
+                s.join(matchIdAsAString);
+            }
         };
 
+        matches[matchIdAsAString] = match;
 
-        let room = io.sockets.adapter.rooms.get(matchId);   
+        let room = io.sockets.adapter.rooms.get(matchIdAsAString);   
 
         if(room){
-            io.to(matchId).emit(SocketEvents.MATCH_FOUND, { matchId, teamA, teamB });
+            io.to(matchIdAsAString).emit(SocketEvents.MATCH_FOUND, { matchId: matchIdAsAString, teamA, teamB });
         }
     })
 
-    socket.on(SocketEvents.MATCH_ACCEPTED, async data => {
+    socket.on(SocketEvents.MATCH_ACCEPTED, async data_ => {
 
-        let { token, match } = data;
+        let { token, match } = data_;
         let decoded = decodeToken(token);
+
         if(!decoded) return;
 
         let { matchId } = match;
 
+        let match_ = matches[matchId];
+
+        if(!match_) return;
+
+
+        match_.teamA = match_.teamA.map( (x:any) => {
+            assertIsUser(decoded);
+            if(x.id === decoded.id){
+                x.acceptedMatch = true;
+            }
+            return x;
+        })
+
+        match_.teamB = match_.teamB.map( (x: any) => {
+            assertIsUser(decoded);
+            if(x.id === decoded.id){
+                x.acceptedMatch = true;
+            }
+            return x;
+        })
+
+
+        let signedToken = signToken({admin: true});
+
+        if(match_.teamA.every( (x:any) => x.acceptedMatch) && match_.teamB.every( (x:any) => x.acceptedMatch)){
+
+            io.emit(SocketEvents.START_MATCH, { matchId, token: signedToken });
+            timeouts[matchId] = setTimeout( () => {
+                io.emit(SocketEvents.CREATE_MATCH, { matchId, token: signedToken });
+                clearTimeout(timeouts[matchId]);
+                delete timeouts[matchId];
+                delete matches[matchId];
+            }, 5000)
+        }
+
+        io.emit(SocketEvents.UPDATE_PLAYERS, { matchId, teamA: match_.teamA, teamB: match_.teamB, token: signedToken })
         let room = io.sockets.adapter.rooms.get(matchId);
 
-        console.log('room is', room);
         if(room){
             io.to(matchId).emit(SocketEvents.MATCH_ACCEPTED, match);
         }
 
     });
 
+    socket.on(SocketEvents.MATCH_DECLINED, async data => {
+        let { token, match } = data;
+        let decoded = decodeToken(token);
+        if(!decoded) return;
+
+        let { matchId } = match;
+
+
+        let match_ = matches[matchId];
+
+        let pass = signToken({ admin: true });
+        let matchShouldBeDeleted = false; 
+
+        if(!match_) return;
+        match_.teamA = match_.teamA.forEach( (x: any) => {
+            assertIsUser(decoded);
+
+            if(x.acceptedMatch === false ){
+                sockets[x.id]?.emit(SocketEvents.MATCH_DECLINED);
+                matchShouldBeDeleted = true;
+            }
+
+        });
+
+        match_.teamB = match_.teamB.forEach( (x: any) => {
+            assertIsUser(decoded);
+
+            if(x.acceptedMatch === false){
+                sockets[x.id]?.emit(SocketEvents.MATCH_DECLINED);
+                matchShouldBeDeleted = true;
+            }
+        });
+
+        if(matchShouldBeDeleted){
+            io.emit("REMOVE_FROM_PLAYING_MATCHES", { 
+                matchId: matchId, 
+                teamA: match_.teamA.filter( (x: any) => x.acceptedMatch === true),
+                teamB: match_.teamB.filter( (x: any) => x.acceptedMatch === true),
+                token: pass 
+            });
+            delete matches[matchId];
+        }
+        // }else{
+
+        //     io.emit(SocketEvents.START_MATCH, { matchId, token: pass });
+
+            // timeouts[matchId] = setTimeout( () => {
+            //     let map = matches[matchId].maps[Math.floor(Math.random() * matches[matchId].maps.length)]
+            //     io.emit(SocketEvents.SELECT_RANDOM_MAP, { map, token: pass });
+            //     clearTimeout(timeouts[matchId]);
+            //     delete timeouts[matchId];
+            //     delete matches[matchId];
+            // }, 10000)
+        // }
+
+    });
+
     socket.on('disconnect', () => {
-        console.log(socket.id)
         delete sockets[socket.id];
     });
 });
 
+let timeouts: any = {};
+
+
+
+// assert is user typescript
+
+function assertIsUser(user: User | boolean): asserts user is User {
+    if(user === false) throw new Error("User not found");
+}
 
 setInterval( () => {
     console.log(Object.keys(sockets));
-}, 10000)
+}, 30000)
 

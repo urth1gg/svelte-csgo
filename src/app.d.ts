@@ -97,6 +97,6 @@ declare global {
 
 	type Match = {
 		maps: Map<string, string>,
-		users: Map<string, Partial<User>>,
+		usersWhoVoted: Map<string, boolean>,
 	}
 }

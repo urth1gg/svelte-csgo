@@ -1,5 +1,8 @@
 function initMapsForMatch(activeMatch: Match) {
 
+    activeMatch.maps = new Map<string, string>();
+    activeMatch.usersWhoVoted = new Map<string, boolean>();
+
     let mapList = [
         {id: 'de_dust2', name: 'Dust 2'},
         {id: 'de_mirage', name: 'Mirage'},
@@ -53,14 +56,41 @@ async function removeUserFromMatch(match_id: string, user_id: string, matchesInM
     return true
 }
 
-async function removeMapFromMatch(activeMatch: Match, map_id: string) {
+async function removeMapFromMatch(activeMatch: Match, userId: string, map_id: string) {
     let map = activeMatch.maps.get(map_id)
 
-    if (map === undefined) {
+    if (map === undefined ||
+         activeMatch.usersWhoVoted.get(userId) === true) {
         return false
     }
 
+    activeMatch.usersWhoVoted.set(userId, true)
     activeMatch.maps.delete(map_id);
     return true
 }
-export { initMapsForMatch, isUserInMatch, removeUserFromMatch,removeMapFromMatch }
+
+async function createMatch(activeMatch: any, supabase: any, map: string) {
+
+    let { matchId, teamA, teamB } = activeMatch
+
+    let { data, error } = await supabase
+        .from('matches')
+        .insert({
+            id: matchId,
+            team_a: teamA,
+            team_b: teamB,
+            map: map,
+            ip: null,
+            winner: '2'
+        })
+
+    console.log('data', data)
+    console.log('created match')
+    if (error) {
+        console.log(error)
+        return false
+    }
+
+    return true
+}
+export { initMapsForMatch, isUserInMatch, removeUserFromMatch,removeMapFromMatch, createMatch }

@@ -48,8 +48,6 @@ export const POST: RequestHandler = async function ({locals, request, cookies}){
         partyId = Math.random().toString(36).substring(2, 11);
     }
 
-    console.log('called by', user?.username)
-    console.log(p1.data, p2.data)
 
     let p11 = supabase.from('users').update({party_id: partyId}).eq('id', user?.id).then()
     let p21 = supabase.from('users').update({party_id: partyId}).eq('id', friendId).then()
