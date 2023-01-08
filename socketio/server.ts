@@ -15,7 +15,7 @@ import dotenv from 'dotenv';
 let sockets: any = {}
 const io = new Server(5000, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: process.env.PUBLIC_BASE_URL,
         methods: ["GET", "POST"]
     }
 });

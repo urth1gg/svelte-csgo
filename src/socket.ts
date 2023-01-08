@@ -1,5 +1,6 @@
 import { io } from 'socket.io-client';
 import { MatchEvents } from '$lib/socket_events/MatchEvents';
+import { PUBLIC_SOCKET_URL } from '$env/static/public'
 
 //singleton pattern socket 
 export class Socket {
@@ -7,7 +8,7 @@ export class Socket {
     private socket: any;
 
     private constructor() {
-        this.socket = io('ws://localhost:5000');
+        this.socket = io(`ws://${PUBLIC_SOCKET_URL}`);
     }
 
     public static getInstance(): any {

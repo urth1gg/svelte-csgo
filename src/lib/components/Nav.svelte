@@ -4,7 +4,8 @@
     import { FriendRequestStatus } from "$lib/enums/enums";
     import { toggleFriends } from "$lib/store/modals";
     import { fetch_ } from "$utils/fetch/fetch_";
-    
+    import { PUBLIC_BASE_URL } from "$env/static/public";
+
     export let loggedIn: boolean;
     export let id: string;
     export let user: User;
@@ -22,7 +23,7 @@
     async function logout(){
         await fetch_('/api/party', {cache: 'reload'});
 
-        await fetch('http://localhost:5173/api/session', {
+        await fetch(`${PUBLIC_BASE_URL}/api/session`, {
             method: 'DELETE',
             credentials: 'include'
         })

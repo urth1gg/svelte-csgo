@@ -15,6 +15,7 @@
     import PartyInvite from "$components/modals/PartyInvite.svelte";
     import PartyModal from "$components/modals/PartyModal.svelte";
     import { MatchEvents } from "$lib/socket_events/MatchEvents";
+	import { PUBLIC_BASE_URL } from "$env/static/public";
 
     export let data;
 
@@ -57,7 +58,7 @@
         let res = null;
 
         try{
-            res = await fetch('http://localhost:5173/api/token', {
+            res = await fetch(`${PUBLIC_BASE_URL}/api/token`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

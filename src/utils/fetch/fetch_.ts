@@ -1,5 +1,5 @@
 import { accessToken } from "$lib/store/accessToken";
-
+import { PUBLIC_BASE_URL } from "$env/static/public";
 
 function fetch_(url: string, options: any = {}){
     let token = '';
@@ -8,7 +8,7 @@ function fetch_(url: string, options: any = {}){
         token = val;
     })
     
-    let baseUrl = 'http://localhost:5173'
+    let baseUrl = PUBLIC_BASE_URL;
 
     let headers = new Headers();
     headers.append('Authorization', `Bearer ${token}`)

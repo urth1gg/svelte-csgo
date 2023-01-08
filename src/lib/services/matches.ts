@@ -1,4 +1,5 @@
 import { convertPlayersToUsers } from "./users";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 function initMapsForMatch(activeMatch: Match) {
 
@@ -80,8 +81,6 @@ async function createMatch(activeMatch: any, supabase: any, map: string) {
 
     let [ teamA__, teamB__] = await Promise.all([teamA_, teamB_]);
 
-    console.log('teamA__', teamA__)
-    console.log('teamB__', teamB__)
     let { data, error } = await supabase
         .from('matches')
         .insert({
@@ -102,4 +101,9 @@ async function createMatch(activeMatch: any, supabase: any, map: string) {
 
     return true
 }
+
+async function checkIfPlayerIsInMatch(steamId: string, supabase: SupabaseClient){
+
+}
+
 export { initMapsForMatch, isUserInMatch, removeUserFromMatch,removeMapFromMatch, createMatch }

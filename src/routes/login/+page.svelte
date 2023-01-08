@@ -1,5 +1,6 @@
 <script lang="ts">
     import { browser } from '$app/environment';
+	import { PUBLIC_BASE_URL } from '$env/static/public';
     import { onMount } from 'svelte';
 
     let emailErrors: string[] = [];
@@ -97,7 +98,7 @@
                 headers.append('Authorization', `Bearer ${data.accessToken}`)
                 headers.append('Content-Type', 'application/json')
 
-                await fetch('http://localhost:5173/api/party', {
+                await fetch(`${PUBLIC_BASE_URL}/api/party`, {
                     cache:'reload',
                     headers: headers,
                     credentials: 'include',

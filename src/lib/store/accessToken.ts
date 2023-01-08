@@ -1,4 +1,5 @@
 import { writable } from "svelte/store";
+import { PUBLIC_BASE_URL } from "$env/static/public";
 
 let accessToken = writable('');
 
@@ -6,7 +7,7 @@ async function refreshManually(){
     let res = null;
 
     try{
-        res = await fetch('http://localhost:5173/api/token', {
+        res = await fetch(`${PUBLIC_BASE_URL}/api/token`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
