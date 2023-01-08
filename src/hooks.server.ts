@@ -34,6 +34,7 @@ export const handle: Handle = async ({event, resolve}) => {
             event.locals.user = null; 
 
             let token = event.request.headers.get('Authorization')?.split(" ")[1];
+            console.log(token)
             let user = decodeToken(token);
             if(!user) return InvalidToken();
             event.locals.user = user;

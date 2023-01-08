@@ -2,6 +2,8 @@ import { MatchEvents } from "$lib/socket_events/MatchEvents";
 import { decodeToken } from "$lib/../utils/auth/decodeToken";
 import { initMapsForMatch, createMatch } from "./matches";
 import { supabase } from "$utils/db/supabase";
+import { aws } from "$lib/services/aws";
+import { signToken } from "$utils/auth/signToken";
 
 MatchEvents.on('UPDATE_PLAYERS', (data: any) => {
   let { matchId, teamA, teamB, token } = data;
@@ -60,11 +62,10 @@ MatchEvents.on("START_MATCH", (data: any) => {
   if(matchIndex === -1) return;
 
   initMapsForMatch(playingMatches.matches[matchIndex]);
-
-
+  
 });
 
-MatchEvents.on("CREATE_MATCH", (data: any) => {
+MatchEvents.on("CREATE_MATCH", async (data: any) => {
   let { matchId, token } = data;
   let matchIndex = playingMatches.matches.findIndex((x: any) => x.matchId === matchId);
 
@@ -76,7 +77,6 @@ MatchEvents.on("CREATE_MATCH", (data: any) => {
 
   let match = playingMatches.matches[matchIndex];
 
-  console.log(match)
   let mapsArray = [...match.maps];
 
   let randomMap = mapsArray[Math.floor(Math.random() * mapsArray.length)];
@@ -85,7 +85,16 @@ MatchEvents.on("CREATE_MATCH", (data: any) => {
   match.maps.set(randomMap[0], randomMap[1]);
 
 
-  createMatch(match, supabase, randomMap[0]);
+  let matchCreated = await createMatch(match, supabase, randomMap[0]);
+
+  if(matchCreated){
+    let t = signToken({user_id: 'admin'})
+
+    if(!t) return;
+    
+    let response = await aws.startInstance(t);
+    console.log(response);
+  }
 });
 
 function checkIfMatchIsReady(match: any){

@@ -99,4 +99,8 @@ declare global {
 		maps: Map<string, string>,
 		usersWhoVoted: Map<string, boolean>,
 	}
+
+	type Player = {
+		id: string,
+	}
 }

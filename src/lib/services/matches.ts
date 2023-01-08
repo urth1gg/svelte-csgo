@@ -1,3 +1,5 @@
+import { convertPlayersToUsers } from "./users";
+
 function initMapsForMatch(activeMatch: Match) {
 
     activeMatch.maps = new Map<string, string>();
@@ -73,12 +75,19 @@ async function createMatch(activeMatch: any, supabase: any, map: string) {
 
     let { matchId, teamA, teamB } = activeMatch
 
+    let teamA_ = convertPlayersToUsers(teamA, supabase)
+    let teamB_ = convertPlayersToUsers(teamB, supabase)
+
+    let [ teamA__, teamB__] = await Promise.all([teamA_, teamB_]);
+
+    console.log('teamA__', teamA__)
+    console.log('teamB__', teamB__)
     let { data, error } = await supabase
         .from('matches')
         .insert({
             id: matchId,
-            team_a: teamA,
-            team_b: teamB,
+            team_a: teamA__,
+            team_b: teamB__,
             map: map,
             ip: null,
             winner: '2'

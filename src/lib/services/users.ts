@@ -9,6 +9,9 @@ export async function getUserWithAllRelatons(username: string, supabase: Supabas
     stats (
         *
     ),
+    flags(
+        *
+    ),
     friends!friends_user_id_fkey (
         friend_id,
         user_id,
@@ -18,7 +21,7 @@ export async function getUserWithAllRelatons(username: string, supabase: Supabas
         ),
         friend:users!friends_friend_id_fkey (
             username
-        )
+        ),
     )
     `).eq('username', username).single()
     
@@ -33,7 +36,16 @@ export async function getUserById(id: string, supabase: SupabaseClient){
     if(!id) return null;
 
     let user = await supabase.from('users').select(`
-      username
+        id,
+        username,
+        email,
+        created_at,
+        stats (
+            *
+        ),
+        flags(
+            *
+        )
     `).eq('id', id).single()
     
     if(user.error){
@@ -74,4 +86,16 @@ export async function setUserPartyId(id: string, partyId: string, supabase: Supa
     if(error) return {error: error};
     
     return {data: data};
+}
+
+export async function convertPlayersToUsers(team: Array<Player>, supabase: SupabaseClient){
+    let users = await Promise.all(team.map(async (player) => {
+        let user = await getUserById(player.id, supabase);
+        if(!user) return player;
+        return {
+            ...user,
+        }
+    }));
+
+    return users as Array<Partial<User>>;
 }
