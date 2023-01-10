@@ -16,7 +16,7 @@ export const POST: RequestHandler = async ({locals, request, cookies}) => {
     let data = await request.json();
 
     if(data.user === CSGO_USER && data.pass === CSGO_PASS){
-        let newAccessToken = jwt.sign({user: CSGO_USER}, JWT_ACCESS_TOKEN_SECRET, {expiresIn: '2h'});
+        let newAccessToken = jwt.sign({user: CSGO_USER}, JWT_ACCESS_TOKEN_SECRET, {expiresIn: '3h'});
         return json({success: true, accessToken: newAccessToken }, {status: 200})
     }
 
