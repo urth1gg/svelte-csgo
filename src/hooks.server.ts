@@ -42,10 +42,8 @@ export const handle: Handle = async ({event, resolve}) => {
     if (
         protectedRoutesRegex.some(route => route.test(event.url.pathname + '@' + event.request.method))
     ) {
-        console.log('got request')
         event.locals.user = null; 
         let token = event.request.headers.get('Authorization')?.split(" ")[1];
-        console.log(token)
         let user = decodeToken(token);
         if(!user) return InvalidToken();
         event.locals.user = user;
