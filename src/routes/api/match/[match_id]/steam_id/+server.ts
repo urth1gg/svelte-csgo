@@ -7,6 +7,7 @@ export const POST: RequestHandler = async function ({locals, params, request}){
  
     let { user } = locals;
 
+    console.log(user)
     if(!user){
         return InvalidRequest()
     }
