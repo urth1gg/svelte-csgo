@@ -1,11 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js"
 
 export async function getUserWithAllRelatons(username: string, supabase: SupabaseClient){
+    console.log(username)
     let user = await supabase.from('users').select(`
     id,
     username,
     email,
     created_at,
+    steam_id,
     stats (
         *
     ),
@@ -21,10 +23,10 @@ export async function getUserWithAllRelatons(username: string, supabase: Supabas
         ),
         friend:users!friends_friend_id_fkey (
             username
-        ),
+        )
     )
-    `).eq('username', username).single()
-    
+    `).eq('username', username).single();
+  
     if(user.error){
         return null;
     }
@@ -39,6 +41,7 @@ export async function getUserById(id: string, supabase: SupabaseClient){
         id,
         username,
         email,
+        steam_id,
         created_at,
         stats (
             *

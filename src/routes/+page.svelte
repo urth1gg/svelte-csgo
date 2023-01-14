@@ -6,6 +6,7 @@
     import ProvideUsername from '$components/inputs/ProvideUsername.svelte';
 	import { FriendRequestStatus } from '$lib/enums/enums';
     import { userData, setFriends } from '$lib/store/userData';
+    import ProvideSteamId from '$components/inputs/ProvideSteamId.svelte';
 
     export let data;
 
@@ -17,6 +18,9 @@
         friends = value.friends as Friend[];
     })
 
+    console.log('hey')
+    console.log(user)
+
 </script>
 
 <div class="w-full p-5 flex gap-5">
@@ -25,6 +29,9 @@
             <ProvideUsername />
         {/if}
         
+        {#if !user.steam_id}
+            <ProvideSteamId />
+        {/if}
         
         <Queue lazy={$accessToken ? false: true }/>
         <FriendRequests lazy={$accessToken ? false: true } friends={

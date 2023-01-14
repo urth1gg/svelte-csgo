@@ -22,22 +22,43 @@ export const PATCH: RequestHandler = async function ({locals, request}){
     let body = await request.json();
     let { username } = body;
 
-    //validate username 
-    if(username.length < 3) return json({error: 'Username must be at least 3 characters long.'}, {status: 400})
-    if(username.length > 15) return json({error: 'Username must be less than 15 characters long.'}, {status: 400})
+    let dataObj: Partial<User> = {}
+    for(let key in body){
+        if(key === 'username'){
+            if(username.length < 3) return json({error: 'Username must be at least 3 characters long.'}, {status: 400})
+            if(username.length > 15) return json({error: 'Username must be less than 15 characters long.'}, {status: 400})
+        
+            //check if username is email regex 
+            let emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            if(emailRegex.test(username)) return json({error: 'Username cannot be an email.'}, {status: 400})
+        
+            //check if username is already taken
+        
+            let taken = await locals.supabase.from('users').select('*').eq('username', username);
+            if(taken.error) throw new Error(taken.error.message)
+            if(taken.data.length > 0) return json({error: 'Username is already taken.'}, {status: 400})
 
-    //check if username is email regex 
-    let emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    if(emailRegex.test(username)) return json({error: 'Username cannot be an email.'}, {status: 400})
+            dataObj[key] = body[key];
+        }
+        if(key === 'steam_id'){
 
-    //check if username is already taken
+            //check if steam id is already taken
+            let taken = await locals.supabase.from('users').select('*').eq('steam_id', body[key]);
+            if(taken.error) throw new Error(taken.error.message)
+            if(taken.data.length > 0) return json({error: 'Steam ID is already taken.'}, {status: 400})
 
-    let taken = await locals.supabase.from('users').select('*').eq('username', username);
-    if(taken.error) throw new Error(taken.error.message)
-    if(taken.data.length > 0) return json({error: 'Username is already taken.'}, {status: 400})
+            //check if steam id is valid
+            let steamIdRegex = /^STEAM_[0-5]:[0-1]:[0-9]{1,15}$/;
+
+            if(!steamIdRegex.test(body[key])) return json({error: 'Invalid Steam ID.'}, {status: 400})
 
 
-    let { data, error } = await UsersService.updateUser(user.id, {username: username}, locals.supabase);
+            dataObj[key] = body[key];
+        }
+    }
+
+
+    let { data, error } = await UsersService.updateUser(user.id, dataObj, locals.supabase);
 
     if(error) return json({error: error.message}, {status: 500});
 

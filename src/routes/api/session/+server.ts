@@ -23,6 +23,7 @@ export const POST: RequestHandler = async function ({locals, request, cookies}){
     let { email, password } = await request.json();
     let { data, error } = await locals.supabase.from('users').select('*').eq('email', email);
     
+    console.log(data)
     if(error) throw new Error(error.message)
  
     if(!data || data.length === 0){
@@ -40,6 +41,7 @@ export const POST: RequestHandler = async function ({locals, request, cookies}){
         id: data[0].id,
         email: data[0].email,
         username: data[0].username,
+        steam_id: data[0].steam_id,
     }
 
     if(!match){

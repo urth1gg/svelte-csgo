@@ -17,30 +17,39 @@ export const handle: Handle = async ({event, resolve}) => {
         '/api/party@ALL',
         '/api/queue@ALL',
         '/api/match@ALL',
-        '/api/user@PATCH'
-    ]
+        '/api/user@PATCH',
+        '/api/flags@ALL',
+        '/api/match/*/steam_id@POST',
+    ];
     
-
-    if(protectedRoutes.includes(
-        event.url.pathname + '@' + event.request.method 
-    ) || 
-        protectedRoutes.includes(
-            event.url.pathname + '@ALL'
-        )
-    ){
-        let [ _ , method ] = protectedRoutes.find(route => route.includes(event.url.pathname))?.split('@') || [];
-
-        if(method === event.request.method || method === 'ALL'){
-            event.locals.user = null; 
-
-            let token = event.request.headers.get('Authorization')?.split(" ")[1];
-            console.log(token)
-            let user = decodeToken(token);
-            if(!user) return InvalidToken();
-            event.locals.user = user;
-            event.locals.token = token;
+    let protectedRoutesRegex = protectedRoutes.map(route => {
+        if (route.endsWith('@ALL')) {
+            let path = route.substring(0, route.length - 3);
+            return new RegExp(`^${path}`);
+        } else if (route.includes('*')) {
+            let parts = route.split('*');
+            console.log(parts[0], parts[1])
+            let start = parts[0].replace(/\//g, "\\/");
+            let end = parts[1].replace(/\//g, "\\/");
+            console.log(start, end)
+            return new RegExp(`^${start}.*${end}$`);
+        } else {
+            return new RegExp(`^${route}$`);
         }
-
+    });
+    
+    console.log(event.url.pathname + '@' + event.request.method)
+    if (
+        protectedRoutesRegex.some(route => route.test(event.url.pathname + '@' + event.request.method))
+    ) {
+        console.log('got request')
+        event.locals.user = null; 
+        let token = event.request.headers.get('Authorization')?.split(" ")[1];
+        console.log(token)
+        let user = decodeToken(token);
+        if(!user) return InvalidToken();
+        event.locals.user = user;
+        event.locals.token = token;
     }
     
 

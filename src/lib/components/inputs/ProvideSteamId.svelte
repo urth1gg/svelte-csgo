@@ -4,14 +4,14 @@
 
     let error: string = "";
 
-    let username = ''
+    let steam_id = ''
     async function onSubmit(e: Event) {
         e.preventDefault()
 
         let res = await fetch_('/api/user', {
             method: 'PATCH',
             body: JSON.stringify({
-                username
+                steam_id
             })
         })
 
@@ -44,15 +44,15 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0,0,0,0.5);
-        z-index: 100;
+        z-index: 99;
     }
 </style>
 
 <div class='overlay'>
     <div class="justify-center items-center flex flex-col h-screen section w-full">
         <form on:submit={onSubmit} autocomplete="off">
-            <label for="username" class='text-white font-bold'>Please set username to proceed</label><br/><br/>
-            <input type="text" id="username" name="username_new" bind:value={username} placeholder="Username"/>
+            <label for="steam_id" class='text-white font-bold'>Please set your CS:GO Steam ID to proceed</label><br/><br/>
+            <input type="text" id="steam_id" name="steam_id_new" bind:value={steam_id} placeholder="Steam ID"/>
             <button class="btn btn-primary p-2" type="submit">Submit</button>
             {#if error}
             <div class="errors mt-1">

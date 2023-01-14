@@ -35,6 +35,7 @@ declare global {
 		email: string,
 		profile_img: string,
 		created_at: string,
+		steam_id: string,
 		partyMembers: Partial<User>[],
 		isFriend: {
 			status: FriendRequestStatus | undefined,

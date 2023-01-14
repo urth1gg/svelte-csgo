@@ -31,8 +31,18 @@ export const POST: RequestHandler = async ({locals, request, cookies}) => {
             return json({error: 'Token has already been used to authenthicate you. If it was not you, contact us immediately.'}, {status: 401})
         }
 
-        let newAccessToken = jwt.sign({email: verifyRT.email, id: verifyRT.id, username: verifyRT.username}, JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
-        let newRefreshToken = jwt.sign({email: verifyRT.email, id: verifyRT.id, username: verifyRT.username}, JWT_REFRESH_TOKEN_SECRET, { expiresIn: '1d' })
+        let newAccessToken = jwt.sign({
+            email: verifyRT.email, 
+            id: verifyRT.id, 
+            username: verifyRT.username, 
+            steam_id: verifyRT.steam_id
+        }, JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
+        let newRefreshToken = jwt.sign({
+            email: verifyRT.email, 
+            id: verifyRT.id, 
+            username: verifyRT.username,
+            steam_id: verifyRT.steam_id
+        }, JWT_REFRESH_TOKEN_SECRET, { expiresIn: '1d' })
 
         refreshTokens.set(verifyRT.email, newRefreshToken)
 
@@ -62,8 +72,8 @@ export const PUT: RequestHandler = async ({locals, request, cookies}) => {
     if(!data) return json({error: 'User not found'}, {status: 404});
 
     let username = data.username;
-    let newAccessToken = jwt.sign({email: user.email, id: user.id, username: username}, JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
-    let newRefreshToken = jwt.sign({email: user.email, id: user.id, username: username}, JWT_REFRESH_TOKEN_SECRET, { expiresIn: '1d' })
+    let newAccessToken = jwt.sign({email: user.email, id: user.id, username: username, steam_id: data.steam_id}, JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
+    let newRefreshToken = jwt.sign({email: user.email, id: user.id, username: username, steam_id: data.steam_id}, JWT_REFRESH_TOKEN_SECRET, { expiresIn: '1d' })
 
     refreshTokens.set(user.email, newRefreshToken)
 
