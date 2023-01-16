@@ -102,3 +102,23 @@ export async function convertPlayersToUsers(team: Array<Player>, supabase: Supab
 
     return users as Array<Partial<User>>;
 }
+
+export async function getUserBySteamId(steam_id: string, supabase: SupabaseClient){
+    let { data, error } = await supabase.from('users').select(`
+        id,
+        username,
+        email,
+        steam_id,
+        created_at,
+        stats (
+            *
+        ),
+        flags(
+            *
+        )
+    `).eq('steam_id', steam_id).single();
+
+    if(error) return null;
+    
+    return data as Partial<User>;
+}
