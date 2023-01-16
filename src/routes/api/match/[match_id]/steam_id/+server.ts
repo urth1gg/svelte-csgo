@@ -2,7 +2,7 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { InvalidRequest, Success } from "$lib/json_responses/responses";
 import { json } from "@sveltejs/kit"
 import { CSGO_USER } from "$env/static/private";
-import UsersService from "$lib/services/users";
+import * as UsersService from "$lib/services/users";
 
 export const POST: RequestHandler = async function ({locals, params, request}){
  
@@ -48,7 +48,7 @@ export const POST: RequestHandler = async function ({locals, params, request}){
         let user = await UsersService.getUserBySteamId(steam_id, supabase);
         if(!user) return InvalidRequest();
 
-        let { username } = user.data;
+        let { username } = user;
         let team = teamA.find((x: any) => x.steam_id === steam_id) ? 2 : 3;
 
         return json({username, team, playerIsInMatch}, {status: 200})
