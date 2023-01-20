@@ -33,6 +33,8 @@ export const POST: RequestHandler = async function ({locals, params, request}){
     }
     if(!match.data) return InvalidRequest();
 
+    let { halftime } = match.data;
+
     let teamA = match.data.team_a.map((x: string) => JSON.parse(x))
     let teamB = match.data.team_b.map((x:string) => JSON.parse(x))
 
@@ -52,6 +54,6 @@ export const POST: RequestHandler = async function ({locals, params, request}){
         
         let team = teamA.find((x: any) => x.steam_id === steam_id) ? 2 : 3;
 
-        return json({username, team, playerIsInMatch}, {status: 200})
+        return json({username, team, playerIsInMatch, halftime}, {status: 200})
     }
 }
