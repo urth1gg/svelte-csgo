@@ -49,6 +49,7 @@ export const POST: RequestHandler = async function ({locals, params, request}){
         if(!user) return InvalidRequest();
 
         let { username } = user;
+        
         let team = teamA.find((x: any) => x.steam_id === steam_id) ? 2 : 3;
 
         return json({username, team, playerIsInMatch}, {status: 200})
