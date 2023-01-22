@@ -20,6 +20,8 @@ export const handle: Handle = async ({event, resolve}) => {
         '/api/user@PATCH',
         '/api/flags@ALL',
         '/api/match/*/steam_id@POST',
+        '/api/match/*/match_end@POST',
+        '/api/match/*/halftime@POST',
     ];
     
     let protectedRoutesRegex = protectedRoutes.map(route => {
