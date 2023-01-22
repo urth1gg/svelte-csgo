@@ -89,7 +89,7 @@ async function createMatch(activeMatch: any, supabase: any, map: string) {
             team_b: teamB__,
             map: map,
             ip: null,
-            winner: '2'
+            winner: '0'
         })
 
     console.log('data', data)
