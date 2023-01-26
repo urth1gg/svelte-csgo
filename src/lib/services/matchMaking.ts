@@ -93,7 +93,6 @@ MatchEvents.on("CREATE_MATCH", async (data: any) => {
     if(!t) return;
     
     let response = await aws.startInstance(t);
-    console.log(response);
   }
 });
 
