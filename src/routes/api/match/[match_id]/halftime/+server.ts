@@ -21,7 +21,16 @@ export const POST: RequestHandler = async function ({locals, params, request}){
     console.log(steam_id)
     // check if there's a match and steam_id is in the match
 
-    let match = await locals.supabase.from('matches').update({halftime: true}).eq('id', params.match_id).single();
+    let curHalftime = await locals.supabase.from('matches').select('halftime').eq('id', params.match_id).single();
+
+    if(curHalftime.error) {
+        console.log(curHalftime.error)
+        return json({error: curHalftime.error}, {status: 500})
+    }
+    if(!curHalftime.data) return InvalidRequest();
+
+    let { halftime } = curHalftime.data;
+    let match = await locals.supabase.from('matches').update({halftime: !halftime}).eq('id', params.match_id).single();
 
     if(match.error) {
         return InvalidRequest()
