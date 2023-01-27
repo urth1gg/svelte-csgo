@@ -22,6 +22,7 @@ export const handle: Handle = async ({event, resolve}) => {
         '/api/match/*/steam_id@POST',
         '/api/match/*/match_end@POST',
         '/api/match/*/halftime@POST',
+        '/api/match/*/teams_swapped@POST',
     ];
     
     let protectedRoutesRegex = protectedRoutes.map(route => {
