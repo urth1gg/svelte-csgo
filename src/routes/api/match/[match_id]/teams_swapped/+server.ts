@@ -8,6 +8,7 @@ export const POST: RequestHandler = async function ({locals, params, request}){
  
     let { user, supabase } = locals;
 
+    
     if(!user){
         return InvalidRequest()
     }
@@ -22,6 +23,7 @@ export const POST: RequestHandler = async function ({locals, params, request}){
     // check if there's a match and steam_id is in the match
 
     let match = await locals.supabase.from('matches').update({teams_swapped: true}).eq('id', params.match_id).single();
+
 
     if(match.error) {
         return InvalidRequest()

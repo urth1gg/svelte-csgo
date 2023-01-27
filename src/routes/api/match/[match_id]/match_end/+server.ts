@@ -39,8 +39,8 @@ export const POST: RequestHandler = async function ({locals, params, request}){
 
     if(!t) return InvalidRequest();
     
-    let response = await aws.terminateInstance(t);
-    console.log(response)
+    //let response = await aws.terminateInstance(t);
+    //console.log(response)
 
     //await aws.terminateInstance(match.data.ip);
     await locals.supabase.from('matches').update({winner}).eq('id', params.match_id);
