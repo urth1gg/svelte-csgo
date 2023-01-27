@@ -4,6 +4,26 @@ import { json } from "@sveltejs/kit"
 import { CSGO_USER } from "$env/static/private";
 import * as UsersService from "$lib/services/users";
 
+
+const CS_TEAM_T = 2;
+const CS_TEAM_CT = 3;
+
+class TeamVariable{
+    team: number;
+
+    constructor(team: number){
+        this.team = team;
+    }
+
+    swap(){
+        if(this.team === CS_TEAM_T){
+            this.team = CS_TEAM_CT;
+        }else if(this.team === CS_TEAM_CT){
+            this.team = CS_TEAM_T;
+        }
+    }
+
+}
 export const POST: RequestHandler = async function ({locals, params, request}){
  
     let { user, supabase } = locals;
@@ -33,7 +53,7 @@ export const POST: RequestHandler = async function ({locals, params, request}){
     }
     if(!match.data) return InvalidRequest();
 
-    let { halftime } = match.data;
+    let { halftime, teams_swapped } = match.data;
 
     let teamA = match.data.team_a.map((x: string) => JSON.parse(x))
     let teamB = match.data.team_b.map((x:string) => JSON.parse(x))
@@ -52,8 +72,25 @@ export const POST: RequestHandler = async function ({locals, params, request}){
 
         let { username } = user;
         
-        let team = teamA.find((x: any) => x.steam_id === steam_id) ? 2 : 3;
+        let playerIsInTeamCT = teamA.some((x: any) => x.steam_id === steam_id); 
 
-        return json({username, team, playerIsInMatch, halftime}, {status: 200})
+
+        let team; 
+
+        if(playerIsInTeamCT){
+            team = new TeamVariable(CS_TEAM_CT);
+        }else{
+            team = new TeamVariable(CS_TEAM_T);
+        }
+
+        if(teams_swapped){
+            team.swap();
+        }
+
+        if(halftime){
+            team.swap();
+        }
+
+        return json({username, team: team.team, playerIsInMatch}, {status: 200})
     }
 }
