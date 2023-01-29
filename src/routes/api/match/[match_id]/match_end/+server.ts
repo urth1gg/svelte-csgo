@@ -6,6 +6,10 @@ import * as UsersService from "$lib/services/users";
 import { aws } from '$lib/services/aws';
 import { signToken } from "$utils/auth/signToken";
 
+const DRAW = '1';
+const CS_TEAM_T = '2';
+const CS_TEAM_CT = '3';
+
 export const POST: RequestHandler = async function ({locals, params, request}){
  
     let { user, supabase } = locals;
@@ -33,8 +37,6 @@ export const POST: RequestHandler = async function ({locals, params, request}){
     if(!match.data) return InvalidRequest();
     if(match.data.winner !== '0') return InvalidRequest();
 
-    let winner = data.winner;
-
     let t = signToken({user_id: 'admin'})
 
     if(!t) return InvalidRequest();
@@ -43,13 +45,26 @@ export const POST: RequestHandler = async function ({locals, params, request}){
     //console.log(response)
 
     //await aws.terminateInstance(match.data.ip);
+
+    let ctScore = data.ct_score;
+    let tScore = data.t_score;
+
+    let winner = '0';
+    if(ctScore > tScore){
+        winner = CS_TEAM_CT
+    }else if(tScore > ctScore){
+        winner = CS_TEAM_T
+    }else{
+        winner = DRAW;
+    }
+
     await locals.supabase.from('matches').update({winner}).eq('id', params.match_id);
 
 
-    let winningTeam;
-    if(winner === '2'){
+    let winningTeam = null;
+    if(winner === CS_TEAM_CT){
         winningTeam = match.data.team_a;
-    }else if(winner === '3'){
+    }else if(winner === CS_TEAM_T){
         winningTeam = match.data.team_b;
     }
 
