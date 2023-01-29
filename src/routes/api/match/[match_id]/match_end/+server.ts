@@ -58,6 +58,9 @@ export const POST: RequestHandler = async function ({locals, params, request}){
         winner = DRAW;
     }
 
+    console.log('ct_score', ctScore)
+    console.log('t_score', tScore)
+    
     await locals.supabase.from('matches').update({winner}).eq('id', params.match_id);
 
 
