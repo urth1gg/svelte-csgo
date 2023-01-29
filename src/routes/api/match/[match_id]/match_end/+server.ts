@@ -9,6 +9,26 @@ import { signToken } from "$utils/auth/signToken";
 const DRAW = '1';
 const CS_TEAM_T = '2';
 const CS_TEAM_CT = '3';
+const MATCH_STOPPED = '4';
+
+class TeamVariable{
+    team: string;
+
+    constructor(team: string){
+        this.team = team;
+    }
+
+    swap(){
+        if(this.team === DRAW) return;
+
+        if(this.team === CS_TEAM_T){
+            this.team = CS_TEAM_CT;
+        }else if(this.team === CS_TEAM_CT){
+            this.team = CS_TEAM_T;
+        }
+    }
+
+}
 
 export const POST: RequestHandler = async function ({locals, params, request}){
  
@@ -49,30 +69,46 @@ export const POST: RequestHandler = async function ({locals, params, request}){
     let ctScore = data.ct_score;
     let tScore = data.t_score;
 
-    let winner = '0';
-    if(ctScore > tScore){
-        winner = CS_TEAM_CT
-    }else if(tScore > ctScore){
-        winner = CS_TEAM_T
-    }else{
-        winner = DRAW;
+    if(ctScore < 16 && tScore < 16) {
+        //locals.supabase.from('matches').update({winner: MATCH_STOPPED}).eq('id', params.match_id).then();
+        //console.log('stopped prematurely');
+        //return Success();
     }
 
-    console.log('ct_score', ctScore)
-    console.log('t_score', tScore)
-    
-    await locals.supabase.from('matches').update({winner}).eq('id', params.match_id);
+    let winner = null;
+    if(ctScore > tScore){
+        winner = new TeamVariable(CS_TEAM_CT);
+    }else if(tScore > ctScore){
+        winner = new TeamVariable(CS_TEAM_T);
+    }else{
+        winner = new TeamVariable(DRAW);
+    }
+
+
+    if(match.data.halftime){
+        winner.swap();
+    }
+
+    if(match.data.teams_swapped){
+        winner.swap();
+    }
+
+    locals.supabase.from('matches').update({winner: winner.team}).eq('id', params.match_id).then();
+
+    if(winner.team === DRAW){
+        return Success();
+    }
 
 
     let winningTeam = null;
-    if(winner === CS_TEAM_CT){
+
+    if(winner.team === CS_TEAM_CT){
         winningTeam = match.data.team_a;
-    }else if(winner === CS_TEAM_T){
+    }else if(winner.team === CS_TEAM_T){
         winningTeam = match.data.team_b;
     }
 
-    console.log('winning_team', winningTeam);
-
-
+    console.log(winningTeam)
+    
     return Success();
 }
