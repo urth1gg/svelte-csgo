@@ -5,7 +5,7 @@ import { CSGO_USER } from "$env/static/private";
 import * as UsersService from "$lib/services/users";
 import { aws } from '$lib/services/aws';
 import { signToken } from "$utils/auth/signToken";
-import { changeElo } from "$lib/services/matches";
+import { matchEndedCallback } from "$lib/services/matches";
 
 const DRAW = '1';
 const CS_TEAM_T = '2';
@@ -95,12 +95,7 @@ export const POST: RequestHandler = async function ({locals, params, request}){
     }
 
     await locals.supabase.from('matches').update({winner: winner.team}).eq('id', params.match_id).then();
-
-    if(winner.team === DRAW){
-        return Success();
-    }
-
-    await changeElo(match.data.id, supabase);
+    await matchEndedCallback(match.data.id, supabase);
 
     return Success();
 }
