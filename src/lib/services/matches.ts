@@ -166,14 +166,27 @@ async function changeElo(matchId:number, supabase: SupabaseClient){
 
     let kFactor = 32
 
+
+    console.log('Scores')
+    console.log(actualScoreA, actualScoreB)
+
     let newEloA = AteamAverageElo + kFactor * (actualScoreA - expectedScoreA)
     let newEloB = BteamAverageElo + kFactor * (actualScoreB - expectedScoreB)
 
     
+    console.log('New elos')
+    console.log(newEloA, newEloB)
+
     let eloDifferenceTeamA = Math.round(newEloA - AteamAverageElo);
     let eloDifferenceTeamB = Math.round(newEloB - BteamAverageElo);
     
 
+    console.log('Elo difference')
+    console.log(eloDifferenceTeamA, eloDifferenceTeamB)
+
+    console.log('Average elos')
+    console.log(AteamAverageElo, BteamAverageElo)
+    
     for(let i = 0; i < teamA.length; i++){
 
         let { data: data2, error: error2 } = await supabase
