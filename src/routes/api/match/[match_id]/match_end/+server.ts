@@ -94,7 +94,7 @@ export const POST: RequestHandler = async function ({locals, params, request}){
         winner.swap();
     }
 
-    locals.supabase.from('matches').update({winner: winner.team}).eq('id', params.match_id).then();
+    await locals.supabase.from('matches').update({winner: winner.team}).eq('id', params.match_id).then();
 
     if(winner.team === DRAW){
         return Success();
