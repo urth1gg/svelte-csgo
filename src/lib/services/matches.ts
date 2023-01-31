@@ -135,14 +135,17 @@ async function changeElo(matchId:number, supabase: SupabaseClient){
         let data = JSON.parse(JSONString)
 
         teamA.push(data.id)
-        AteamAverageElo += data.elo
+
+        if(data.elo) AteamAverageElo += data.elo
+        else AteamAverageElo += data.stats[0].elo
     })
 
     team_b.forEach((JSONString: string) => {
         let data = JSON.parse(JSONString)
 
         teamB.push(data.id)
-        BteamAverageElo += data.elo
+        if(data.elo) BteamAverageElo += data.elo
+        else BteamAverageElo += data.stats[0].elo
     })
 
     AteamAverageElo = AteamAverageElo / team_a.length
