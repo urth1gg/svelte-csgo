@@ -5,6 +5,7 @@ import { CSGO_USER } from "$env/static/private";
 import * as UsersService from "$lib/services/users";
 import { aws } from '$lib/services/aws';
 import { signToken } from "$utils/auth/signToken";
+import { changeElo } from "$lib/services/matches";
 
 const DRAW = '1';
 const CS_TEAM_T = '2';
@@ -99,16 +100,7 @@ export const POST: RequestHandler = async function ({locals, params, request}){
         return Success();
     }
 
+    await changeElo(match.data.id, supabase);
 
-    let winningTeam = null;
-
-    if(winner.team === CS_TEAM_CT){
-        winningTeam = match.data.team_a;
-    }else if(winner.team === CS_TEAM_T){
-        winningTeam = match.data.team_b;
-    }
-
-    console.log(winningTeam)
-    
     return Success();
 }

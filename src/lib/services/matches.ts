@@ -1,4 +1,5 @@
 import { convertPlayersToUsers } from "./users";
+import { CS_TEAM_CT, CS_TEAM_T, DRAW } from "../consts/consts";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 function initMapsForMatch(activeMatch: Match) {
@@ -102,8 +103,134 @@ async function createMatch(activeMatch: any, supabase: any, map: string) {
     return true
 }
 
-async function checkIfPlayerIsInMatch(steamId: string, supabase: SupabaseClient){
+async function changeElo(matchId:number, supabase: SupabaseClient){
+    let { data, error } = await supabase
+        .from('matches')
+        .select('team_a, team_b, winner')
+        .eq('id', matchId)
+        .single()
 
-}
+    if(error){
+        console.log(error)
+        return false
+    }
 
-export { initMapsForMatch, isUserInMatch, removeUserFromMatch,removeMapFromMatch, createMatch }
+    if(data === null){
+        return false
+    }
+
+    if(data.winner === DRAW){
+        return false
+    }
+
+    let { team_a, team_b } = data
+
+    let AteamAverageElo = 0
+    let BteamAverageElo = 0
+
+    let teamA: string[] = []
+    let teamB: string[] = []
+
+    team_a.forEach((JSONString: string) => {
+        let data = JSON.parse(JSONString)
+
+        teamA.push(data.id)
+        AteamAverageElo += data.elo
+    })
+
+    team_b.forEach((JSONString: string) => {
+        let data = JSON.parse(JSONString)
+
+        teamB.push(data.id)
+        BteamAverageElo += data.elo
+    })
+
+    AteamAverageElo = AteamAverageElo / team_a.length
+    BteamAverageElo = BteamAverageElo / team_b.length
+
+    let expectedScoreA = 1 / (1 + Math.pow(10, (BteamAverageElo - AteamAverageElo) / 400))
+    let expectedScoreB = 1 / (1 + Math.pow(10, (AteamAverageElo - BteamAverageElo) / 400))
+
+    let actualScoreA = 0
+    let actualScoreB = 0
+
+
+    if(data.winner === CS_TEAM_CT){
+        actualScoreA = 1
+    }else if(data.winner === CS_TEAM_T){
+        actualScoreB = 1
+    }
+
+    let kFactor = 32
+
+    let newEloA = AteamAverageElo + kFactor * (actualScoreA - expectedScoreA)
+    let newEloB = BteamAverageElo + kFactor * (actualScoreB - expectedScoreB)
+
+    
+    let eloDifferenceTeamA = Math.round(newEloA - AteamAverageElo);
+    let eloDifferenceTeamB = Math.round(newEloB - BteamAverageElo);
+    
+
+    for(let i = 0; i < teamA.length; i++){
+
+        let { data: data2, error: error2 } = await supabase
+            .from('stats')
+            .select('elo')
+            .eq('user_id', teamA[i])
+            .single()
+
+        if(error2){
+            console.log(error2)
+            continue
+        }
+
+        if(data2 === null){
+            continue
+        }
+
+        let { elo } = data2
+
+        let { data, error } = await supabase
+            .from('stats')
+            .update({ elo: elo +  eloDifferenceTeamA})
+            .eq('user_id', teamA[i])
+
+
+        if(error){
+            console.log(error)
+            continue
+        }
+    }
+
+    for(let i = 0; i < teamB.length; i++){
+        let { data: data2, error: error2 } = await supabase
+        .from('stats')
+        .select('elo')
+        .eq('user_id', teamA[i])
+        .single()
+
+        if(error2){
+            console.log(error2)
+            continue
+        }
+
+        if(data2 === null){
+            continue
+        }
+
+        let { elo } = data2
+
+        let { data, error } = await supabase
+            .from('stats')
+            .update({ elo: elo +  eloDifferenceTeamB })
+            .eq('user_id', teamB[i])
+
+        if(error){
+            console.log(error)
+            continue
+        }
+    }
+
+}   
+
+export { initMapsForMatch, isUserInMatch, removeUserFromMatch,removeMapFromMatch, createMatch, changeElo }
