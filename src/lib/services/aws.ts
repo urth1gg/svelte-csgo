@@ -1,4 +1,8 @@
+import { S3 } from '@aws-sdk/client-s3';
+
 class Aws{
+    s3: any;
+
     constructor(){}
 
     async startInstance(token: string){
@@ -29,6 +33,18 @@ class Aws{
         let response = await request.json();
 
         return response;
+    }
+
+    getS3(){
+        if(this.s3) return this.s3;
+
+        return this.s3 = new S3({
+            region: 'eu-central-1',
+            credentials: {
+                accessKeyId: "AKIAXRVX4XCMMI3NR5EZ",
+                secretAccessKey: "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"
+            }
+        })
     }
 }
 

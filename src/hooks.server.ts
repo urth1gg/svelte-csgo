@@ -23,6 +23,9 @@ export const handle: Handle = async ({event, resolve}) => {
         '/api/match/*/match_end@POST',
         '/api/match/*/halftime@POST',
         '/api/match/*/teams_swapped@POST',
+        '/api/ac/audio@POST',
+        '/api/ac/screenshots@POST',
+        '/api/ac/memory/*@POST',
     ];
     
     let protectedRoutesRegex = protectedRoutes.map(route => {
@@ -31,29 +34,30 @@ export const handle: Handle = async ({event, resolve}) => {
             return new RegExp(`^${path}`);
         } else if (route.includes('*')) {
             let parts = route.split('*');
-            console.log(parts[0], parts[1])
             let start = parts[0].replace(/\//g, "\\/");
             let end = parts[1].replace(/\//g, "\\/");
-            console.log(start, end)
             return new RegExp(`^${start}.*${end}$`);
         } else {
             return new RegExp(`^${route}$`);
         }
     });
     
-    console.log(event.url.pathname + '@' + event.request.method)
     if (
         protectedRoutesRegex.some(route => route.test(event.url.pathname + '@' + event.request.method))
     ) {
+        console.log('Protected route: ' + event.url.pathname + '@' + event.request.method)
+
         event.locals.user = null; 
         let token = event.request.headers.get('Authorization')?.split(" ")[1];
+
+        console.log('Token received: ' + token);
+
         let user = decodeToken(token);
         if(!user) return InvalidToken();
         event.locals.user = user;
         event.locals.token = token;
     }
     
-
     const response = await resolve(event)
     return response;
 }
