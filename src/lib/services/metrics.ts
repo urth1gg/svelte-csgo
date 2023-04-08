@@ -1,12 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-type Table = "all_processes" | "new_processes" | "";
-
-class Memory{   
-    table: Table;
+class Metrics{   
+    table: string;
 
     constructor(){
-        this.table = "";
+        this.table = "ac_metrics";
     }
 
 
@@ -18,13 +16,13 @@ class Memory{
         this.table = "new_processes";
     }
 
-    async sendMemoryData(data: any, user: Partial<User>,supabase: SupabaseClient){
+    async sendMetrics(data: any, user: Partial<User>,supabase: SupabaseClient){
         if(this.table === ""){
             return { error: "Table not set" }
         }
 
         let { error } = await supabase.from(this.table).insert({
-            processes: data,
+            csgo_open: data,
             user_id: user.id
         }).single();
         if(error){
@@ -35,6 +33,6 @@ class Memory{
 
 }
 
-let memory = new Memory();
+let metrics = new Metrics();
 
-export { memory }
+export { metrics }

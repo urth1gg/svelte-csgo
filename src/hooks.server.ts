@@ -26,6 +26,7 @@ export const handle: Handle = async ({event, resolve}) => {
         '/api/ac/audio@POST',
         '/api/ac/screenshots@POST',
         '/api/ac/memory/*@POST',
+        '/api/ac/metrics@POST'
     ];
     
     let protectedRoutesRegex = protectedRoutes.map(route => {
