@@ -3,9 +3,7 @@ import { json } from '@sveltejs/kit';
 import { Success } from '$lib/json_responses/responses';
 import { metrics } from '$lib/services/metrics';
 
-// TODO: Change GET to POST, change mock user to real user
-
-export const POST: RequestHandler = async function ({locals, request, cookies}){
+export const POST: RequestHandler = async function ({locals, request}){
     let { user, supabase } = locals;
 
 
@@ -13,7 +11,7 @@ export const POST: RequestHandler = async function ({locals, request, cookies}){
         return json({ error: 'User not found' }, { status: 500 })
     }
 
-    let { data } = await request.json();
+    let data = await request.json();
 
     console.log(data);
 
