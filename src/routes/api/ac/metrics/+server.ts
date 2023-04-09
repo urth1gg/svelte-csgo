@@ -15,6 +15,7 @@ export const POST: RequestHandler = async function ({locals, request, cookies}){
 
     let { data } = await request.json();
 
+    console.log(data);
 
     let { error } = await metrics.sendMetrics(data.vm_full_access_counter, user, supabase);
 
