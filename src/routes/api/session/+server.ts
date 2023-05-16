@@ -23,7 +23,6 @@ export const POST: RequestHandler = async function ({locals, request, cookies}){
     let { email, password } = await request.json();
     let { data, error } = await locals.supabase.from('users').select('*').eq('email', email);
     
-    console.log(data)
     if(error) throw new Error(error.message)
  
     if(!data || data.length === 0){
