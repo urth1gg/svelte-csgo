@@ -1,5 +1,5 @@
-import { MatchEvents } from "$lib/socket_events/MatchEvents";
-import { decodeToken } from "$lib/../utils/auth/decodeToken";
+import { MatchEvents } from "../socket_events/MatchEvents";
+import { decodeToken } from "../../utils/auth/decodeToken";
 import { initMapsForMatch, createMatch } from "./matches";
 import { supabase } from "$utils/db/supabase";
 import { aws } from "$lib/services/aws";

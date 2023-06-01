@@ -2,17 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300&display=swap');
+
 :root{
     --blue: #4da1ff;
     --blue-shade: #6CE1FF; 
     --yellow: #FBFF00;
     --yellow-shade: #fbff00;
     --body-bg: #062649; 
-    --section: #0088ff;
-    --new-bg: #192222;
-    --new-bg-other: #192555;
+    --section: #080808;
+    --new-bg-other: #080808;
+    --new-bg: rgba(0,0,0,.8);
     --test-color: #0079ff;
-    --input-color: #0079ff;
+    --input-color: #080808;
     --input-focus-color: #1a86ff;
     --orange: #ff7700;
     --green: #00ff77;
@@ -22,7 +24,8 @@
 
 body{
     background-image: linear-gradient(40deg, var(--section) 0%, var(--new-bg-other) 100%);
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    /* background-color: rgb(8,8,8, 0.8); */
+    font-family: "Exo 2", sans-serif;
     letter-spacing: 0.05em;
     max-width: 2400px;
     margin:0 auto;
@@ -73,7 +76,7 @@ input:focus{
     background-color: #1a86ff !important;
 }
 .gradient-section{
-    background-image: linear-gradient(90deg, var(--section) 0%, var(--new-bg-other) 100%);
+    background-image: linear-gradient(173deg, var(--section) 0%, var(--new-bg-other) 100%);
     transition:all 1s linear;
     @apply p-3;
 }
@@ -254,7 +257,7 @@ i{
 
 .section{
     /*background-color: #140F0F;*/
-    background-image: linear-gradient(45deg, var(--section) 20%, var(--new-bg-other) 100%);
+    background-image: linear-gradient(45deg, var(--section) 0%, var(--new-bg-other) 100%);
     transition:all 1s linear;
     @apply p-3;
 }
@@ -352,4 +355,12 @@ i{
     width: 100%;
     height:5px;
     background-color: white;
+}
+
+.artwork-container{
+    display:inline-block;
+}
+
+.small-paragraph{
+    font-size:18px !important;
 }

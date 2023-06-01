@@ -12,7 +12,7 @@
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
 		"socket": "nodemon ./socketio/server.ts ./.env",
-		"vitest": "vitest --reporter verbose"
+		"vitest": "cd tests && vitest --reporter verbose"
 	},
 	"devDependencies": {
 		"@aws-sdk/client-s3": "^3.44.0",
@@ -49,7 +49,8 @@
 		"tslib": "^2.3.1",
 		"typescript": "^4.9.3",
 		"vite": "^3.1.0",
-		"vitest": "^0.25.2"
+		"vitest": "^0.25.2",
+		"@vitejs/plugin-basic-ssl": "*"
 	},
 	"type": "module"
 }

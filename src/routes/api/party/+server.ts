@@ -1,6 +1,7 @@
 import{ json, type RequestHandler } from "@sveltejs/kit";
 import { Success } from "$lib/json_responses/responses";
 import { Socket } from '../../../socket';
+
 export const GET: RequestHandler = async function ({locals, request, cookies}){
     
     let { user, supabase } = locals;

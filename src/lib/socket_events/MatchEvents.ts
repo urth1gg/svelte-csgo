@@ -1,4 +1,3 @@
-import type { Socket } from "socket.io";
 import { Socket as SocketSingleton } from "$lib/../socket";
 
 type MatchSubscriptions = {

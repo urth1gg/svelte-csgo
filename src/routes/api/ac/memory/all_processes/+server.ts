@@ -1,6 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { json } from '@sveltejs/kit';
-import { aws } from '$lib/services/aws';
+// import { aws } from '$lib/services/aws';
 import { memory } from '$lib/services/memory';
 import { Success } from '$lib/json_responses/responses';
 
