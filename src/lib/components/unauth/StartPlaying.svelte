@@ -186,7 +186,7 @@
     <div class="flex w-12/12 justify-center items-center history mr-5 padded-section">
         <div>
             <h1 class="main-heading">The solution</h1>
-            <p class="sub-text text-center small-paragraph m-auto pr-8">
+            <p class="sub-text text-center small-paragraph m-auto pr-8 pl-8">
                 The solution is simple, yet incredibly effective - make players accountable.
                 <br><br>
                 In the world of Counter-Strike, actions should have consequences. That's the ethos we're built on. While other platforms might tolerate disruptive behaviors for the sake of revenue, we're taking a different path. For us, it's not about profit. It's about preserving the integrity of the game we all love.
