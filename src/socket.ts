@@ -1,5 +1,4 @@
 import { io } from 'socket.io-client';
-import { MatchEvents } from '$lib/socket_events/MatchEvents';
 import { PUBLIC_SOCKET_URL } from '$env/static/public'
 
 //singleton pattern socket 

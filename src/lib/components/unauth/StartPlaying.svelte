@@ -2,6 +2,7 @@
     import SectionHeader from '$lib/components/SectionHeader.svelte';
 </script>
 
+
 <style>
 
     .main-heading {
@@ -25,9 +26,10 @@
 
     .button{
         color:white;
-        background:orange;
+        background:#DAA520;
         padding:10px 20px;
         border-radius:5px;
+        text-shadow: 2px 2px 2px #000000;
         font-weight: bold;
     }
 
@@ -93,48 +95,55 @@
         @apply p-3;
     }
 
-    .divider {
-        height: 3px;
-        background: repeating-linear-gradient(
-            60deg,
-            #0CA692,
-            #0CA692,
-            #C940AA,
-            #C940AA,
-            #2E1366,
-            #2E1366,
-            #139670,
-            #139670,
-            #0773A7,
-            #0773A7,
-            #FFFF2D,
-            #FFFF2D,
-            #E83701,
-            #E83701,
-            #B41EA2,
-            #B41EA2,
-            #270C5C,
-            #270C5C,
-            #0CA692
-        );
-        background-size: 200% 100%;
-        animation: gradientAnimation 15s linear infinite;
-        margin:1.5rem 0rem;
+    @keyframes hue-rotate {
+        0% {
+            filter: hue-rotate(0deg);
+        }
+        50% {
+            filter: hue-rotate(-45deg);
+        }
+        100% {
+            filter: hue-rotate(0deg);
+        }
     }
 
-    @keyframes gradientAnimation {
-        from { background-position: 200% }
-        to { background-position: 0 }
+    @keyframes hue-rotate-with-contrast{
+        0% {
+            filter: hue-rotate(0deg) contrast(0.85);
+        }
+        50% {
+            filter: hue-rotate(-45deg) contrast(0.85);
+        }
+        100% {
+            filter: hue-rotate(0deg) contrast(0.85);
+        }
     }
 
+    .hue-rotate{
+        animation: hue-rotate 5s infinite linear;
+    }
 
+    .hue-rotate-with-contrast{
+        animation: hue-rotate-with-contrast 5s infinite linear;
+    }
+    .rotate-hue-35deg{
+        filter: hue-rotate(-35deg) contrast(0.9);
+    }
+
+    .rotate-hue-45deg{
+        filter: hue-rotate(-45deg) contrast(1.3);
+    }
 </style>
+
+<head>
+    <title>Dusty Dreams</title>
+</head>
 <div class="section w-full p-5 h-[600px]">
     <div class="flex w-11/12 justify-center items-center padded-section">
         <div class="artwork-container mr-4 brightness-125">
-            <div class="img rounded-lg">
+            <div class="img rounded-lg artwork-soldier-2">
                 <!-- <img src="/images/ai/artwork-soldier-3-noborder.png" class="w-[500px]" alt="soldier" width="400"/> -->
-                <img src="/images/ai/artwork-soldier-2.png" class="w-[500px]" alt="soldier" width="400"/>
+                <img src="/images/ai/artwork-soldier-2-nobg-sharp.png" class="w-[480px] hue-rotate" alt="soldier" width="400"/>
             </div>
         </div>
         <div>
@@ -160,7 +169,7 @@
             </p>
         </div>
         <div class="history-img-container brightness-125">
-            <div class="img rounded-lg">
+            <div class="img rounded-lg hue-rotate-with-contrast">
                 <img src="/images/history/zonic.jpg" class="w-[200px] img1 rounded" alt="zonic"/>
                 <img src="/images/history/edward.jpg" class="w-[200px] img2 rounded" alt="zonic"/>
                 <img src="/images/history/spawn.jpg" class="w-[200px] img3 rounded" alt="zonic"/>
@@ -169,9 +178,10 @@
     </div>
     <div class="divider"></div>
 
-    <div class="mt-3 flex w-12/12 justify-center items-center bg-gray padded-section rounded-lg history">
+    
+    <div class="mt-3 flex w-12/12 justify-center items-center section rounded-lg history">
         <div class="w-auto p-10 mr-8">
-            <img src="/images/ai/soldier-problem-4.png" alt="soldier" class="m-auto rounded-lg" width="1000" />
+            <img src="/images/ai/soldier-problem-4-sharp.jpeg" alt="soldier" class="m-auto rounded-lg rotate-hue-35deg" width="1000" />
         </div>
         <div class="w-full pr-5">
             <h1 class="main-heading text-center">✨ The problem ✨</h1>
@@ -200,9 +210,22 @@
         </div>
         <div class="brightness-125 w-full">
             <div class="rounded-lg">
-                <img src="/images/ai/the-solution.png" class="w-[500px] rounded" alt="solution" width="100%"/>
+                <img src="/images/ai/the-solution.png" class="w-[500px] rounded rotate-hue-45deg" alt="solution" width="100%"/>
             </div>
         </div>
     </div>
+
+    <div class="divider"></div>
+
+    <footer class="mt-2 flex justify-between text-[#FFF] p-10 h-[120px]">
+        <h1 class="text-lg">Dustydreamsgg</h1>
+    
+        <div class="text-sm">
+            <a href="/terms" class="mr-2">Terms and Services</a>
+            <a href="/privacy-policy">Privacy Policy</a>
+            <a href="/contact" class="ml-2">Contact Us</a>
+            <!-- <a href="/faq" class="ml-2">FAQ</a> -->
+        </div>
+    </footer>
 
 </div>

@@ -2,23 +2,40 @@
     import { browser } from '$app/environment';
     import SectionHeader from '$lib/components/SectionHeader.svelte';
     import LoadableImage from '../inputs/LoadableImage.svelte';
-    export let user: User;
-    export let userLoggedIn: Partial<User> | null;
+    import Graph from '../graphs/Graph.svelte';
+
+    export let user: User = {} as User;
+    export let userLoggedIn: User | null = null;
 
     let stats: Stats | undefined;
     let winRate = 0;
     let kdRatio = 0;
 
+    let dataPoints = {
+      labels: ['', '', '', '', ''],
+      datasets: [
+        {
+          label: 'User ELO',
+          data: [300, 500, 650, 800, 950],  // ELO ratings
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1,
+          fill: true,
+        }
+      ]
+    };
 
-    stats = user.stats?.[0];
+    if(user){
+        stats = user.stats;
 
-    if(stats){
-        winRate = stats.wins/stats.losses * 100;
-        kdRatio = stats.kills/stats.deaths;
-    }
+        if(stats){
+            winRate = stats.wins/stats.losses * 100;
+            kdRatio = stats.kills/stats.deaths;
+        }
 
-    user.isFriend = {
-        status: user?.friends?.find((x: Partial<Friend>) => x.friend_id === userLoggedIn?.id)?.status,
+        user.isFriend = {
+            status: user?.friends?.find((x: Partial<Friend>) => x.friend_id === userLoggedIn?.id)?.status,
+        }
+
     }
 
 </script>
@@ -46,7 +63,7 @@
         <h4 class="text-base font-bold info">{isNaN(winRate) ? '0' : winRate }%</h4>
     </div>
 </div>
-<div class="section3 w-full flex">
+<div class="w-full flex">
     <div class="w-auto profile">
         <LoadableImage 
             src={user.profile_img} 
@@ -98,5 +115,10 @@
                 </div>
             </div>
         </div>
+        <div class="flex w-full h-[300px]">
+            <Graph dataPoints={dataPoints} />
+        </div>
+
     </div>
+
 </div>

@@ -113,9 +113,24 @@
 
 </script>
 
+<style>
+    .input-field {
+        background-color: transparent;
+        border: none;
+        border-bottom: 1px solid white;
+        outline: none;
+        color: white;
+        width: 100%;
+    }
+    .input-field:focus {
+        border-bottom: 1px solid #64ffda;
+    }
+
+</style>
 <div class="flex justify-center items-center bg-custom h-screen section w-full">
-    <div class="w-1/3 max-sm:w-2/3">
+    <div class="w-1/3 max-sm:w-2/3 p-5 bg-gray">
         <h1 class="text-3xl font-bold text-center text-white">Login</h1>
+        <div class="divider"></div>
         <form class="mt-4" on:submit={onSubmit} autocomplete="on">
             <div class="mb-4">
                 <label class="block text-white text-sm font-bold mb-2" for="email">
@@ -124,7 +139,7 @@
                 <input 
                     bind:this={emailInput}
                     autocomplete="email"
-                    class="{errorClassEmail} shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
+                    class="{errorClassEmail} shadow appearance-none w-full py-2 px-3 text-white leading-tight input-field" id="email" type="text" placeholder="Email">
                 {#each emailErrors as error}
                     <p class="italic input-error">{error}</p>
                 {/each}
@@ -134,16 +149,19 @@
                     Password
                 </label>
                 <input bind:this={passwordInput}
-                    autocomplete="current-password" class="bla shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
+                    autocomplete="current-password" class="shadow appearance-none w-full py-2 px-3 text-gray-700 mb-3 leading-tight input-field" id="password" type="password" placeholder="******************">
                 {#each passwordErrors as error}
                     <p class="italic input-error">{error}</p>
                 {/each}
             </div>
             <div class="flex items-center justify-between">
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                <button type="submit" class="w-full mb-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4">
                     Login
                 </button>
             </div>
         </form>
+        <div class="text-center text-white">
+            <a href="/register">Don't have an account? Register here</a>
+        </div>
     </div>
 </div>

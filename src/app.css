@@ -5,17 +5,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300&display=swap');
 
 :root{
-    --blue: #4da1ff;
+    --blue: #3B82F6;
     --blue-shade: #6CE1FF; 
     --yellow: #FBFF00;
     --yellow-shade: #fbff00;
     --body-bg: #062649; 
-    --section: #080808;
-    --new-bg-other: #080808;
+    --section: #222;
+    --new-bg-other: #111;
     --new-bg: rgba(0,0,0,.8);
     --test-color: #0079ff;
-    --input-color: #080808;
-    --input-focus-color: #1a86ff;
+    --input-color: rgb(12,12,12);
+    --input-focus-color: rgb(22,22,22) !important;
     --orange: #ff7700;
     --green: #00ff77;
     --pink: #ff0088;
@@ -45,16 +45,18 @@ input{
     color:white !important;
     border:1px solid lightgray;
     outline: unset;
-    @apply p-2 rounded-md;
+    @apply p-2;
 }
 
+.text-bold{
+    font-weight: bold;
+}
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 textarea:-webkit-autofill,
 textarea:-webkit-autofill:hover,
 select:-webkit-autofill,
 select:-webkit-autofill:hover{
-  border: 1px solid white;
   -webkit-text-fill-color: white;
   -webkit-box-shadow: 0 0 0px 1000px var(--input-color) inset;
   transition: background-color 5000s ease-in-out 0s;
@@ -64,7 +66,6 @@ select:-webkit-autofill:hover{
 input:-webkit-autofill:focus,
 textarea:-webkit-autofill:focus,
 select:-webkit-autofill:focus{
-    border: 1px solid white;
     -webkit-text-fill-color: white;
     -webkit-box-shadow: 0 0 0px 1000px var(--input-focus-color) inset;
     transition: background-color 5000s ease-in-out 0s;
@@ -73,7 +74,7 @@ input::placeholder{
     color: #ccc;
 }
 input:focus{
-    background-color: #1a86ff !important;
+    background-color:  rgb(22,22,22) !important;
 }
 .gradient-section{
     background-image: linear-gradient(173deg, var(--section) 0%, var(--new-bg-other) 100%);
@@ -101,6 +102,44 @@ nav{
     color: red !important;
     font-weight: bold;
     @apply text-sm;
+}
+
+.divider {
+    height: 3px;
+    background: repeating-linear-gradient(
+        60deg,
+        #0CA692,
+        #0CA692,
+        #C940AA,
+        #C940AA,
+        #2E1366,
+        #2E1366,
+        #139670,
+        #139670,
+        #0773A7,
+        #0773A7,
+        #FFFF2D,
+        #FFFF2D,
+        #E83701,
+        #E83701,
+        #B41EA2,
+        #B41EA2,
+        #270C5C,
+        #270C5C,
+        #0CA692
+    );
+    background-size: 200% 100%;
+    animation: gradientAnimation 15s linear infinite;
+    margin:1.5rem 0rem;
+}
+
+@keyframes gradientAnimation {
+    from { background-position: 200% }
+    to { background-position: 0 }
+}
+
+.bg-gray{
+    background-color:rgb(12,12,12);
 }
 
 .btn{
@@ -154,15 +193,15 @@ background: var(--blue-shade);
 }
 
 .cool-input:hover{
-    filter: brightness(0.9) !important;
+    filter: brightness(1.5) !important;
 }
 
 .cool-input{
     @apply p-2 rounded-lg font-bold text-sm;
     margin:0 auto;
     margin-top:2rem;
-    text-shadow: white 0px 0px 4px;
-    background-color: var(--test-color);
+    text-shadow: white 0px 0px 1px;
+    background-color: rgb(22,22,22);
 }
 
 .modal-friends{
@@ -257,7 +296,7 @@ i{
 
 .section{
     /*background-color: #140F0F;*/
-    background-image: linear-gradient(45deg, var(--section) 0%, var(--new-bg-other) 100%);
+    background-image: linear-gradient(-45deg, var(--section) 0%, var(--new-bg-other) 100%);
     transition:all 1s linear;
     @apply p-3;
 }

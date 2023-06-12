@@ -93,7 +93,7 @@
         success = true;
         setTimeout( () => {
             success = false;
-            document.location.pathname = "/"
+            document.location.pathname = "/login"
         }, 2000)
 
         password = '';
@@ -101,6 +101,20 @@
     }
 
 </script>
+
+<style>
+    .input-field {
+        background-color: transparent;
+        border: none;
+        border-bottom: 1px solid white;
+        outline: none;
+        color: white;
+        width: 100%;
+    }
+    .input-field:focus {
+        border-bottom: 1px solid #64ffda;
+    }
+</style>
 
 <div class="{scaleClass} bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded absolute w-full transation-all duration-700" role="alert">
     <strong class="font-bold">Success!</strong>
@@ -114,14 +128,15 @@
 
 
 <div class="flex justify-center items-center bg-custom h-screen section w-full">
-    <div class="w-1/3 max-sm:w-2/3">
+    <div class="w-1/3 max-sm:w-2/3 p-5 bg-gray">
         <h1 class="text-3xl font-bold text-center text-white">Register</h1>
+        <div class="divider"></div>
         <form class="mt-4" on:submit={onSubmit}>
             <div class="mb-4">
                 <label class="block text-white text-sm font-bold mb-2" for="email">
                     Email
                 </label>
-                <input bind:value={email} autofocus={true} class="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none" id="email" type="text" placeholder="Email" name="email">
+                <input bind:value={email} autofocus={true} class="input-field" id="email" type="text" placeholder="Email" name="email">
                 {#each emailErrors as error}
                     <p class="text-sm italic font-bold input-error">{error}</p>
                 {/each}
@@ -130,16 +145,19 @@
                 <label class="block text-white text-sm font-bold mb-2" for="password">
                     Password
                 </label>
-                <input bind:value={password} autocomplete="current-password" class="shadow appearance-none border rounded w-full py-2 px-3 text-white mb-3 leading-tight focus:outline-none" id="password" type="password" placeholder="******************">
+                <input bind:value={password} autocomplete="current-password" class="input-field" id="password" type="password" placeholder="******************">
                 {#each passwordErrors as error}
                     <p class="text-xs italic input-error">{error}</p>
                 {/each}
             </div>
             <div class="flex items-center justify-between">
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none">
+                <button type="submit" class="w-full mb-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4">
                     Register
                 </button>
             </div>
         </form>
+        <div class="text-center text-white">
+            <a href="/login">Already have an account? Log in here</a>
+        </div>
     </div>
 </div>

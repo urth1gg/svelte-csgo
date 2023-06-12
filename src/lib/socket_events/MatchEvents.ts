@@ -1,4 +1,4 @@
-import { Socket as SocketSingleton } from "$lib/../socket";
+import { Socket as SocketSingleton } from "../../socket";
 
 type MatchSubscriptions = {
     MATCH_FOUND: string

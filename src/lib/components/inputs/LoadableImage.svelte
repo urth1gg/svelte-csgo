@@ -16,7 +16,7 @@
 
 <style>
     .no-img{
-        background-color: var(--test-color);
+        background-color: var(--section);
         width: 100%;
         height: 100%;
         border:1px solid white;
@@ -25,12 +25,12 @@
     
     i{
         @apply text-9xl;
-        color: var(--blue-shade);
+        color: var(--yellow);
     }
 
     i.fa-check{
         @apply text-base;
-        color: var(--white);
+        color: var(--yellow);
     }
 </style>
 <div class="w-[200px] aspect-square p-1 {style}">

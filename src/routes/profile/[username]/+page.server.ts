@@ -5,9 +5,8 @@ export async function load({ params, locals, cookies }: ServerLoadEvent) {
 
     if(!params.username) return { error: 404 }
 
-    let user: Partial<User> | null = await getUserWithAllRelatons(params.username, locals.supabase);
+    let user: User | null = await getUserWithAllRelatons(params.username, locals.supabase) as User | null;
 
-    console.log(user)
     if(!user) return { error: 404 }
 
     return {

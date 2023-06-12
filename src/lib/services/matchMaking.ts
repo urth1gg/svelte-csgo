@@ -1,9 +1,11 @@
 import { MatchEvents } from "../socket_events/MatchEvents";
 import { decodeToken } from "../../utils/auth/decodeToken";
 import { initMapsForMatch, createMatch } from "./matches";
-import { supabase } from "$utils/db/supabase";
-import { aws } from "$lib/services/aws";
-import { signToken } from "$utils/auth/signToken";
+import { supabase } from "../utils/db/supabase";
+import { aws } from "../services/aws";
+import { signToken } from "../../utils/auth/signToken";
+
+//let aws = {};
 
 MatchEvents.on('UPDATE_PLAYERS', (data: any) => {
   let { matchId, teamA, teamB, token } = data;

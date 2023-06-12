@@ -113,8 +113,8 @@
 
 <style>
     .btn{
-        background: #00ff77;
         @apply p-3 rounded-lg font-bold text-sm;
+        background: var(--blue);
         width: 120px;
         margin:0 auto;
         margin-top:2rem;
@@ -126,7 +126,7 @@
     }
 
     i{
-        color: var(--blue-shade)
+        color: var(--yellow);
     }
 
     .loading{

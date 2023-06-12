@@ -15,7 +15,7 @@ export const decodeToken = (token: string | undefined) => {
     if(!JWT_ACCESS_TOKEN_SECRET) throw new Error('JWT_ACCESS_TOKEN_SECRET is not defined');
     
     try{
-        let t = jwt.verify(token, JWT_ACCESS_TOKEN_SECRET as string) as User;
+        let t = jwt.verify(token, JWT_ACCESS_TOKEN_SECRET as string) as Partial<User>;
         return t;
     }catch(e){
         return false;

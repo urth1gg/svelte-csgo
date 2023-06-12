@@ -41,7 +41,7 @@ declare global {
 			status: FriendRequestStatus | undefined,
 		} | null,
 		party_id?: string,
-		stats?: Array<Stats>,
+		stats?: Stats,
 		friends?: Array<Friend>,
 		flags?: Array<UserFlags>
 

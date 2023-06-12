@@ -60,8 +60,8 @@
                     {/if}
                     <!-- <img class="block lg:hidden h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg" alt="Workflow">
                     <img class="hidden lg:block h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg" alt="Workflow"> -->
-                    <a href="/"><div class="flex items-center lg:hidden h-8 w-auto text-white text-bold">VALHALLA</div></a>
-                    <a href="/"><div class="hidden lg:flex lg:items-center h-8 w-auto text-white text-bold">VALHALLA</div></a>
+                    <a href="/"><div class="flex items-center lg:hidden h-8 w-auto text-white text-bold">DUSTYDREAMS.GG</div></a>
+                    <a href="/"><div class="hidden lg:flex lg:items-center h-8 w-auto text-white text-bold">DUSTYDREAMS.GG</div></a>
                 </div>
                 <div class="hidden sm:block sm:ml-3 w-full">
                     <div class="flex space w-full">
