@@ -133,14 +133,56 @@
     .rotate-hue-45deg{
         filter: hue-rotate(-45deg) contrast(1.3);
     }
+
+    @media only screen and (max-width: 800px) {
+    .main-heading {
+        font-size: 24px;
+    }
+    
+    .sub-text {
+        font-size: 16px;
+        text-align: center;
+    }
+    
+    .artwork-container img, .solution img{
+        width: 100%;
+        margin:0 auto;
+    }
+
+    .history-img-container img {
+
+    }
+
+    .button-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .button {
+        padding: 5px 10px;
+    }
+
+    .flex-reverse{
+        flex-direction: column-reverse !important;
+    }
+
+    .flex{
+        flex-direction: column;
+    }
+
+    .height-mobile{
+        height: auto !important;
+    }
+}
 </style>
 
 <head>
     <title>Dusty Dreams</title>
 </head>
-<div class="section w-full p-5 h-[600px]">
-    <div class="flex w-11/12 justify-center items-center padded-section">
-        <div class="artwork-container mr-4 brightness-125">
+<div class="w-full p-5">
+    <div class="flex w-11/12 m-auto justify-center items-center padded-section section">
+        <div class="artwork-container mr-4">
             <div class="img rounded-lg artwork-soldier-2">
                 <!-- <img src="/images/ai/artwork-soldier-3-noborder.png" class="w-[500px]" alt="soldier" width="400"/> -->
                 <img src="/images/ai/artwork-soldier-2-nobg-sharp.png" class="w-[480px] hue-rotate" alt="soldier" width="400"/>
@@ -157,7 +199,7 @@
 
     <div class="divider"></div>
     
-    <div class="flex w-11/12 justify-center items-center history mr-5 padded-section">
+    <div class="flex flex-reverse w-11/12 m-auto justify-center items-center history mr-5 padded-section">
         <div>
             <h1 class="main-heading">Let's talk history</h1>
             <p class="sub-text text-center small-paragraph pr-8 pl-8">
@@ -193,7 +235,7 @@
         </div>
     </div>
 
-    <div class="flex w-12/12 justify-center items-center history mr-5 padded-section">
+    <div class="flex flex-reverse w-12/12 justify-center items-center solution mr-5 padded-section">
         <div>
             <h1 class="main-heading">The solution</h1>
             <p class="sub-text text-center small-paragraph m-auto pr-8 pl-8">
@@ -229,3 +271,4 @@
     </footer>
 
 </div>
+
