@@ -9,6 +9,7 @@ export async function load({ params, locals, cookies }: ServerLoadEvent) {
 
     if(!user) return { error: 404 }
 
+    console.log(user)
     return {
         user: user,
         userLoggedIn: locals.user

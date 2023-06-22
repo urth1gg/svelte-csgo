@@ -14,6 +14,9 @@ export async function getUserWithAllRelatons(username: string, supabase: Supabas
     flags(
         *
     ),
+    elo_history (
+        *
+    ),
     friends!friends_user_id_fkey (
         friend_id,
         user_id,

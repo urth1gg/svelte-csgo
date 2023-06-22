@@ -24,6 +24,19 @@
       ]
     };
 
+    let dataPoints2 = {
+      labels: ['', '', '', '', ''],
+      datasets: [
+        {
+          label: 'Kills per match',
+          data: [19, 18, 22, 21, 23],  // ELO ratings
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1,
+          fill: true,
+        }
+      ]
+    };
+
     if(user){
         stats = user.stats;
 
@@ -73,7 +86,7 @@
             profile={user}
         />
     </div>
-    <div class="w-8/12 ml-5">
+    <div class="w-full ml-5">
         <div class="flex flex-col gap-2">
             <div class="flex flex-row gap-2">
                 <div class="w-1/2">
@@ -115,8 +128,9 @@
                 </div>
             </div>
         </div>
-        <div class="flex w-full h-[300px]">
+        <div class="flex w-full h-[300px]" style="margin-left:-100px">
             <Graph dataPoints={dataPoints} />
+            <Graph dataPoints={dataPoints2} />
         </div>
 
     </div>

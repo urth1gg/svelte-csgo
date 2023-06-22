@@ -56,12 +56,18 @@ export const POST: RequestHandler = async function ({locals, params, request}){
     }
 
     if(!match.data) return InvalidRequest();
+
+    console.log(data)
+
     if(match.data.winner !== '0') return InvalidRequest();
 
     let t = signToken({user_id: 'admin'})
 
     if(!t) return InvalidRequest();
     
+
+    //TODO: 
+
     //let response = await aws.terminateInstance(t);
     //console.log(response)
 

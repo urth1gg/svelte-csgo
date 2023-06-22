@@ -48,6 +48,20 @@ async function isUserInMatch(match_id: string, user_id: string, supabase: any) {
     // return true
 }
 
+async function getAllUnfinishedMatches(supabase: any) {
+    let { data, error } = await supabase
+        .from('matches')
+        .select('*')
+        .eq('winner', 0)
+
+    if (error) {
+        console.log(error)
+        return null
+    }
+
+    return data
+}
+
 async function removeUserFromMatch(match_id: string, user_id: string, matchesInMemory: any) {
     let match = matchesInMemory[match_id]
     let user = match.users[user_id]
@@ -145,8 +159,8 @@ async function matchEndedCallback(matchId:number, supabase: SupabaseClient){
     })
 
     if(data.winner === DRAW){
-        await updateElo(teamA, 10, supabase)
-        await updateElo(teamB, 10, supabase)
+        await updateElo(teamA, 10, supabase, matchId);
+        await updateElo(teamB, 10, supabase, matchId);
         return;
     }
     
@@ -170,34 +184,18 @@ async function matchEndedCallback(matchId:number, supabase: SupabaseClient){
 
     let kFactor = 32
 
-
-    console.log('Scores')
-    console.log(actualScoreA, actualScoreB)
-
     let newEloA = AteamAverageElo + kFactor * (actualScoreA - expectedScoreA)
     let newEloB = BteamAverageElo + kFactor * (actualScoreB - expectedScoreB)
 
-    
-    console.log('New elos')
-    console.log(newEloA, newEloB)
-
     let eloDifferenceTeamA = Math.round(newEloA - AteamAverageElo);
     let eloDifferenceTeamB = Math.round(newEloB - BteamAverageElo);
-    
 
-    console.log('Elo difference')
-    console.log(eloDifferenceTeamA, eloDifferenceTeamB)
-
-    console.log('Average elos')
-    console.log(AteamAverageElo, BteamAverageElo)
-
-
-    await updateElo(teamA, eloDifferenceTeamA, supabase)
-    await updateElo(teamB, eloDifferenceTeamB, supabase)
+    await updateElo(teamA, eloDifferenceTeamA, supabase, matchId);
+    await updateElo(teamB, eloDifferenceTeamB, supabase, matchId);
 
 }   
 
-async function updateElo(team: string[], eloIncrement: number, supabase: SupabaseClient){
+async function updateElo(team: string[], eloIncrement: number, supabase: SupabaseClient, matchId: number){
     for(let i = 0; i < team.length; i++){
 
         let { data: data2, error: error2 } = await supabase
@@ -222,12 +220,31 @@ async function updateElo(team: string[], eloIncrement: number, supabase: Supabas
             .update({ elo: elo +  eloIncrement})
             .eq('user_id', team[i])
 
+        
+        let { data: data3, error: error3 } = await supabase
+            .from('elo_history')
+            .insert({ user_id: team[i], new_elo: elo + eloIncrement, match_id: matchId})
+
 
         if(error){
             console.log(error)
             continue
         }
+
+        if(error3){
+            console.log(error3)
+            continue
+        }
+        
     }
 }
 
-export { initMapsForMatch, isUserInMatch, removeUserFromMatch,removeMapFromMatch, createMatch, matchEndedCallback }
+export { 
+    initMapsForMatch, 
+    isUserInMatch, 
+    removeUserFromMatch,
+    removeMapFromMatch, 
+    createMatch, 
+    matchEndedCallback,
+    getAllUnfinishedMatches
+}

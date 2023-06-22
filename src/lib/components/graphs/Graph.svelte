@@ -20,22 +20,25 @@
     
     export let dataPoints: any;
 
-    let options = { 
+    export let options = { 
         maintainAspectRatio: true,
         scales: {
             x: {
                 grid: {
-                display: true,
-                color: '#292929',  // Red color for the vertical lines
+                    display: true,
+                    color: '#292929',  // Red color for the vertical lines
                 }
             },
             y: {
                 grid: {
-                display: true,
-                color: '#292929',  // Green color for the horizontal lines
+                    display: true,
+                    color: '#292929',  // Green color for the horizontal lines
+                },
+                ticks: {
+                    precision: 0,
                 }
             }
-            }
+        }
     };
   
     onMount(() => {

@@ -12,6 +12,25 @@
         // More matches...
       ];
     });
+
+    const showStats = async (matchIndex: number) => {
+      // Create a copy of matches
+      let matchesCopy = [...matches];
+
+      matchesCopy.forEach((match, index) => {
+        match.playersStats = null;
+      });
+      // Fetch player stats based on match
+      // For now, just mock data:
+      matchesCopy[matchIndex].playersStats = [
+        {player: "Player 1", kills: 20, assists: 10, deaths: 5},
+        {player: "Player 2", kills: 15, assists: 8, deaths: 7},
+        // More stats...
+      ];
+
+      // Assign the copy back to matches
+      matches = matchesCopy;
+  }
   </script>
   
   <style>
@@ -61,26 +80,76 @@
       color: red;
       font-weight: bold;
     }
-  </style>
+
+    .table--stats th, .table--stats tr, .table--stats td {
+      background-color: #111;
+    }
+
+    .table--stats tr{
+      border-bottom: 1px solid #333;
+    }
+
+    .table--stats{
+      width: 100%;
+    }
+
+    .td--stats{
+      padding:2px !important;
+      width: 100% !important;
+      background-color: white !important;
+    }
+</style>
   
   
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Result</th>
-        <th>Match Points</th>
-        <th>Score</th>
-        <th>Map Played</th>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Result</th>
+      <th>Match Points</th>
+      <th>Score</th>
+      <th>Map Played</th>
+      <th></th> <!-- Extra column for player stats -->
+    </tr>
+  </thead>
+  <tbody>
+    {#each matches as match, index (match.map_played)}
+      <tr on:click={() => showStats(index)}>
+        <td class={match.winlose.toLowerCase()}>{match.winlose}</td>
+        <td class={match.winlose.toLowerCase()}>{match.matchpoints > 0 ? '+' : ''}{match.matchpoints}</td>
+        <td>{match.number1} / {match.number2}</td>
+        <td>{match.map_played}</td>
+        <td></td> <!-- Extra column for player stats -->
       </tr>
-    </thead>
-    <tbody>
-      {#each matches as match (match.map_played)}
+      {#if match.playersStats}
         <tr>
-          <td class={match.winlose.toLowerCase()}>{match.winlose}</td>
-          <td class={match.winlose.toLowerCase()}>{match.matchpoints > 0 ? '+' : ''}{match.matchpoints}</td>
-          <td>{match.number1} / {match.number2}</td>
-          <td>{match.map_played}</td>
+          <td colspan="4" class="td--stats">
+            <table class="table--stats">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>Kills</th>
+                  <th>Assists</th>
+                  <th>Deaths</th>
+                  <th>K/R</th>
+                  <th>K/D</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each match.playersStats as playerStat (playerStat.player)}
+                  <tr>
+                    <td>{playerStat.player}</td>
+                    <td>{playerStat.kills}</td>
+                    <td>{playerStat.assists}</td>
+                    <td>{playerStat.deaths}</td>
+                    <td>{((playerStat.kills + playerStat.assists) / (match.number1 + match.number2)).toFixed(2)}</td>
+                    <td>{(playerStat.kills / playerStat.deaths).toFixed(2)}</td>                    
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
+          </td>
         </tr>
-      {/each}
+      {/if}
+    {/each}
     </tbody>
-  </table>
+</table>

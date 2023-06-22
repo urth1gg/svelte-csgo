@@ -21,10 +21,24 @@ export const GET: RequestHandler = async ({locals, request, cookies}) => {
 export const POST: RequestHandler = async function ({locals, request, cookies}){
 
     let { email, password } = await request.json();
-    let { data, error } = await locals.supabase.from('users').select('*').eq('email', email);
+
+    let { data, error } = await locals.supabase
+        .from('users')
+        .select(`
+            id, 
+            email, 
+            username, 
+            password, 
+            steam_id,
+            roles (
+                id,
+                role
+            )
+        `)
+        .eq('email', email);
     
-    if(error) throw new Error(error.message)
- 
+    if(error) throw new Error(error.message);
+    
     if(!data || data.length === 0){
         let { response, headers } = errorInvalidFormMessage(
             [
@@ -36,11 +50,15 @@ export const POST: RequestHandler = async function ({locals, request, cookies}){
     const hash = data[0].password
     const match = await bcrypt.compare(password, hash)
 
+    console.log(data)
+
     let obj = {
         id: data[0].id,
         email: data[0].email,
         username: data[0].username,
         steam_id: data[0].steam_id,
+        role_id: (data[0].roles as {id: any, role: any})?.id,
+        role_name: (data[0].roles as {id: any, role: any})?.role,
     }
 
     if(!match){

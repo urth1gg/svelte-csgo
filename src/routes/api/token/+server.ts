@@ -35,13 +35,17 @@ export const POST: RequestHandler = async ({locals, request, cookies}) => {
             email: verifyRT.email, 
             id: verifyRT.id, 
             username: verifyRT.username, 
-            steam_id: verifyRT.steam_id
+            steam_id: verifyRT.steam_id,
+            role_id: verifyRT.role_id,
+            role_name: verifyRT.role_name
         }, JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
         let newRefreshToken = jwt.sign({
             email: verifyRT.email, 
             id: verifyRT.id, 
             username: verifyRT.username,
-            steam_id: verifyRT.steam_id
+            steam_id: verifyRT.steam_id,
+            role_id: verifyRT.role_id,
+            role_name: verifyRT.role_name
         }, JWT_REFRESH_TOKEN_SECRET, { expiresIn: '1d' })
 
         refreshTokens.set(verifyRT.email, newRefreshToken)
