@@ -1,7 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js"
 
 export async function getUserWithAllRelatons(username: string, supabase: SupabaseClient){
-    console.log(username)
     let user = await supabase.from('users').select(`
     id,
     username,
@@ -22,10 +21,18 @@ export async function getUserWithAllRelatons(username: string, supabase: Supabas
         user_id,
         status,
         user:users!friends_user_id_fkey (
-            username
+            id,
+            username,
+            email,
+            created_at,
+            steam_id
         ),
         friend:users!friends_friend_id_fkey (
-            username
+            id,
+            username,
+            email,
+            created_at,
+            steam_id
         )
     )
     `).eq('username', username).single();
@@ -34,7 +41,7 @@ export async function getUserWithAllRelatons(username: string, supabase: Supabas
         return null;
     }
 
-    return user.data as Partial<User>;
+    return user.data;
 }
 
 export async function getUserById(id: string, supabase: SupabaseClient){
@@ -97,10 +104,9 @@ export async function setUserPartyId(id: string, partyId: string, supabase: Supa
 export async function convertPlayersToUsers(team: Array<Player>, supabase: SupabaseClient){
     let users = await Promise.all(team.map(async (player) => {
         let user = await getUserById(player.id, supabase);
-        if(!user) return player;
-        return {
-            ...user,
-        }
+        if(!user) return player.id;
+
+        return user.id
     }));
 
     return users as Array<Partial<User>>;

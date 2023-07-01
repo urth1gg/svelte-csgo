@@ -190,10 +190,12 @@
         await getUserFlags();
     });
 
-    MatchEvents.on("START_MATCH", async (data: any) => {
+    MatchEvents.on("START_MATCH", async () => {
         if(browser) {
+            let matchId = localStorage.getItem('MATCH_FOUND');
+            let newPath = `/match/${matchId}`; // DOESNT REDIRECT?
+            document.location.pathname = newPath;
             localStorage.removeItem('MATCH_FOUND');
-            document.location.pathname = `/match/${data.matchId}`;        
         }
     });
 </script>

@@ -8,16 +8,33 @@
 
     export let data; 
 
-    let { teamA, teamB } = data;
-    let matchMaps: any[] = [];
+    let { teamA, teamB, ip } = data;
 
+    let matchMaps: any[] = [];
     let userVoted = false;
+
+    let timeToConnect = 180; // start time in seconds
+
+    const formatTime = (time: number) => {
+        let minutes = Math.floor(time / 60);
+        let seconds = (time % 60).toString().padStart(2, '0');
+
+        return `${minutes}:${seconds}`;
+    }
+
+    setInterval(() => {
+        if(timeToConnect > 0) {
+            timeToConnect--;
+        }
+    }, 1000);
+
     async function getMaps() {
         if(matchMaps.length !== 0) return; 
 
         let data = await fetch_(`/api/match/${$page.params.matchId}/maps`, {
             method: 'GET',
         })
+
         let json = await data.json();
         matchMaps = json.maps ? json.maps : [];
         userVoted = json.userVoted;
@@ -27,8 +44,17 @@
         }
     }
 
+    function copyToClipboard(event: any) {
+        event.target.select();
+        navigator.clipboard.writeText("connect " + ip);
+    }
+
     onMount(async () => {
         await getMaps();
+    })
+
+    afterUpdate(() => {
+       
     })
 
     MatchEvents.on("REFRESH_ACTIVE_MAPS", async (_: any) => {
@@ -44,6 +70,10 @@
         }
 
     })
+
+    MatchEvents.on("MAP_VOTE_TIMER", (data: any) => {
+        console.log(data.secondsLeft)
+    });
 </script>
 
 <style>
@@ -59,25 +89,45 @@
     }
 
     .ip{
-        padding: 2rem !important;
+        padding-left:0.5rem !important;
+        padding-right:0.5rem !important;
+        padding-top:0 !important;
+        padding-bottom:0 !important;
+        cursor: pointer;
+        font-size:1.2rem;
+        color:var(--yellow) !important;
     }
 
     .maps__container{
         margin:0 auto;
         grid-auto-rows: 50px;
     }
+
+    .time-to-connect{
+        color: var(--yellow) !important;
+        font-size:1.5rem;
+    }
+
+    .bg-transparent{
+        background-color:transparent !important;
+        border-left:none;
+        border-right:none;
+    }
 </style>
 
-<div class="section w-9/12 ml-auto mr-auto mt-5">
+<div class="w-9/12 ml-auto mr-auto mt-5">
     <SectionHeader title={!userVoted ? "Click on the map you'd like to ban." : "You have already voted."} divider={false} classProp="mb-3" />
-    <div class="flex gap-5">
+    <div class="flex gap-5 section">
         <div class="flex flex-col w-3/12 gap-1">
             {#each teamA as player}
                 <div class="player">
-                    <p><i class="fas fa-user mr-1 "></i>{player.id}</p>
+                    <p><i class="fas fa-user mr-1 "></i>{player.username || player.id || player}</p>
                     <div class="flex flex-col ml-auto text-sm">
-                        <p>ELO: {player.elo}</p>
-                        <p>K/D: 1.32</p>
+                        <p>ELO: {player.stats?.elo}</p>
+
+                        {#if player.stats?.kills}
+                            <p>K/D: {(player.stats.kills / player.stats.deaths).toFixed(2) }</p>
+                        {/if}
                     </div>
                 </div>
             {/each}
@@ -101,13 +151,25 @@
         <div class="flex flex-col w-3/12 gap-1">
             {#each teamB as player}
                 <div class="player">
-                    <p><i class="fas fa-user mr-1 "></i>{player.id}</p>
+                    <p><i class="fas fa-user mr-1 "></i>{player.username || player.id || player}</p>
                     <div class="flex flex-col ml-auto text-sm">
-                        <p>ELO: {player.elo}</p>
-                        <p>K/D: 1.32</p>
+                        <p>ELO: {player.stats?.elo}</p>
+                        {#if player.stats?.kills}
+                            <p>K/D: {(player.stats.kills / player.stats.deaths).toFixed(2) }</p>
+                        {/if}
                     </div>
                 </div>
             {/each}
         </div>
     </div>
+    {#if ip}
+    <div class="flex flex-col w-full h-[250px] items-center section text-white">
+        <p class="mt-3"><b>Match has been STARTED!</b></p>
+        <p class="text-bold mt-10">Time to connect: <span class="time-to-connect">{formatTime(timeToConnect)}</span></p>
+
+        <input value="connect {ip}" class="mt-1 text-center ip w-[350px] bg-transparent" on:click={copyToClipboard} />
+
+        <p class="mt-5">Good luck, have fun and REMEMBER to RESPECT the rules.</p>
+    </div>
+    {/if}
 </div>

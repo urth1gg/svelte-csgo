@@ -15,8 +15,6 @@ export const GET: RequestHandler = async function ({ locals, request }) {
     const url = new URL(request.url);
     const params = new URLSearchParams(url.search);
 
-    console.log(params.get('unfinished_matches'));
-    console.log(params)
     if(params.get('unfinished_matches') === 'true'){
         data = await getAllUnfinishedMatches(supabase);
     }

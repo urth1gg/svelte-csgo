@@ -1,9 +1,10 @@
 import { MatchEvents } from "../socket_events/MatchEvents";
 import { decodeToken } from "../../utils/auth/decodeToken";
-import { initMapsForMatch, createMatch } from "./matches";
+import { initMapsForMatch, createMatch, updateMatchMap } from "./matches";
 import { supabase } from "../utils/db/supabase";
 import { aws } from "../services/aws";
 import { signToken } from "../../utils/auth/signToken";
+import { setUserFlags } from "./flags";
 
 //let aws = {};
 
@@ -42,7 +43,6 @@ MatchEvents.on('REMOVE_FROM_PLAYING_MATCHES', (data: any) => {
 
   playingMatches.matches = playingMatches.matches.filter((x:any) => x.matchId !== matchId);
 
-
   let m = new Match(match.matchId, [...teamA], [...teamB], match.eloBound, match.expansionTime)
   m.teamA = teamA 
   m.teamB = teamB
@@ -51,23 +51,40 @@ MatchEvents.on('REMOVE_FROM_PLAYING_MATCHES', (data: any) => {
     m
   );
 
+  console.log('Removed from playing matches')
+  console.log(playingMatches.matches)
 });
 
-MatchEvents.on("START_MATCH", (data: any) => {
+MatchEvents.on("CREATE_MATCH", async (data: any) => {
   let { matchId, token } = data;
   let matchIndex = playingMatches.matches.findIndex((x: any) => x.matchId === matchId);
 
   let decoded = decodeToken(token) as any;
-  console.log(decoded)
   if(!decoded) return;
   if(!decoded.admin) return;
+
   if(matchIndex === -1) return;
 
   initMapsForMatch(playingMatches.matches[matchIndex]);
   
+  let match = playingMatches.matches[matchIndex];
+  let matchCreated = await createMatch(match, supabase, '');
+
+  let allPlayers = [...match.teamA, ...match.teamB];
+
+  let updatePromises = allPlayers.map(player => 
+    setUserFlags(player as Partial<User>, {in_game: true, in_game_match_id: matchId}, supabase)
+  );
+
+  let res = await Promise.all(updatePromises);
+
+  if(matchCreated){
+    MatchEvents.emit("START_MATCH", {matchId: match.matchId, token: token});
+  }
+  
 });
 
-MatchEvents.on("CREATE_MATCH", async (data: any) => {
+MatchEvents.on("UPDATE_MAP", async (data: any) => {
   let { matchId, token } = data;
   let matchIndex = playingMatches.matches.findIndex((x: any) => x.matchId === matchId);
 
@@ -87,14 +104,12 @@ MatchEvents.on("CREATE_MATCH", async (data: any) => {
   match.maps.set(randomMap[0], randomMap[1]);
 
 
-  let matchCreated = await createMatch(match, supabase, randomMap[0]);
+  let isMapUpdated = await updateMatchMap(matchId, randomMap[0], supabase);
 
-  if(matchCreated){
-    let t = signToken({user_id: 'admin'})
-
-    if(!t) return;
-    
-    let response = await aws.startInstance(t);
+  
+  if(isMapUpdated){
+    MatchEvents.emit("REFRESH_ACTIVE_MAPS", {match: match, token: token});
+    //let response = await aws.startInstance(t);
   }
 });
 

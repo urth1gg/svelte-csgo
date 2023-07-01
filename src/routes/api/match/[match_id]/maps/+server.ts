@@ -1,11 +1,9 @@
 import { Success, InvalidRequest } from "$lib/json_responses/responses";
 import type { RequestHandler } from "@sveltejs/kit";
-import { initMapsForMatch, removeMapFromMatch } from "$lib/services/matches";
-import { Socket } from "$lib/../socket";
+import { removeMapFromMatch } from "$lib/services/matches";
 import { playingMatches } from "$lib/services/matchMaking";
 import { json } from "@sveltejs/kit";
 import { MatchEvents } from "$lib/socket_events/MatchEvents";
-import { accessToken } from "$lib/store/accessToken";
 
 export const GET: RequestHandler = async function ({locals, params}){
  
@@ -59,6 +57,7 @@ export const DELETE: RequestHandler = async function ({locals, request, params})
     let { user, supabase } = locals;
     const { match_id } = params
 
+    console.log('banning_map')
     if(!match_id || !user){
         return InvalidRequest()
     }
@@ -74,19 +73,18 @@ export const DELETE: RequestHandler = async function ({locals, request, params})
     if(matchIndex === -1){
         return InvalidRequest()
     }
-    
-    if(playingMatches.matches[matchIndex].maps.size === 1){
-        return InvalidRequest()
-    }
+
 
     let token = request.headers.get('authorization')?.split(' ')[1];
 
     removeMapFromMatch(playingMatches.matches[matchIndex], user.id, map_id);
 
+    console.log('map_deleted');
     if(playingMatches.matches[matchIndex].maps.size === 1){
-        MatchEvents.emit("CREATE_MATCH", {match: playingMatches.matches[matchIndex], token: token});           
+        MatchEvents.emit("UPDATE_MAP", {match: playingMatches.matches[matchIndex]});           
     }else{
-        MatchEvents.emit("REFRESH_ACTIVE_MAPS", {match: playingMatches.matches[matchIndex], token: token})
+        console.log('we here')
+        MatchEvents.emit("REFRESH_ACTIVE_MAPS", {match: playingMatches.matches[matchIndex]})
     }
 
     return Success()    

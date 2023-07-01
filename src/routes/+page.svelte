@@ -18,7 +18,6 @@
         friends = value.friends as Friend[];
     })
 
-    console.log(user)
 
 </script>
 

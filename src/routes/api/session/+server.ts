@@ -50,7 +50,6 @@ export const POST: RequestHandler = async function ({locals, request, cookies}){
     const hash = data[0].password
     const match = await bcrypt.compare(password, hash)
 
-    console.log(data)
 
     let obj = {
         id: data[0].id,

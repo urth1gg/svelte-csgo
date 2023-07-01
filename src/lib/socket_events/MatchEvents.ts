@@ -9,6 +9,8 @@ type MatchSubscriptions = {
     START_MATCH: string
     REFRESH_ACTIVE_MAPS: string
     CREATE_MATCH: string
+    UPDATE_MAP: string
+    MAP_VOTE_TIMER: string
 }
 
 type MatchEmitters = {
@@ -18,6 +20,8 @@ type MatchEmitters = {
     MATCH_FOUND: string
     MATCH_DECLINED: string
     CREATE_MATCH: string
+    START_MATCH: string
+    UPDATE_MAP: string
 }
 
 class MatchEvents{

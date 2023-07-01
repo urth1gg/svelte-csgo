@@ -9,6 +9,7 @@
     export let mapBanned = true;
     export let userVoted = false;
     function banMap(mapName: MapName) {
+
         if(mapBanned) return;
         if(userVoted) return;
 
@@ -40,6 +41,8 @@
         background:var(--section);
         padding-right:0 !important;
         @apply flex justify-between pl-3;
+        background:#232323;
+
 
     }
     .bla{
@@ -47,12 +50,11 @@
     }
     .map__container--banned{
         cursor: not-allowed;
-        pointer-events: none;
-        filter: grayscale(40%);
+        filter:brightness(0.5);
     }
 
     .map__container--already-voted{
-        cursor: not-allowed;
+        cursor: not-allowed !important;
     }
 </style>
 <button class="{userVoted ? 'map__container--already-voted' : ''} flex flex-row w-3/12 p-1 justify-between items-center map__container {mapBanned ? 'map__container--banned' : ''}" on:click={ () => banMap(mapName) }>

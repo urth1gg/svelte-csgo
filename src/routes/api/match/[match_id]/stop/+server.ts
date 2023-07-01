@@ -15,17 +15,13 @@ export const POST: RequestHandler = async function ({locals, params, request}){
     
         //TODO: Make sure that the action is coming from an admin.
 
-        // if(user.username !== CSGO_USER && user.password !== CSGO_PASS){
-        //     return InvalidRequest()
-        // }
+        if(user.role_name !== 'admin'){
+            return InvalidRequest()
+        }
     
-        let data = await request.json();
-    
-        // check if there's a match and steam_id is in the match
     
         let match = await locals.supabase.from('matches').select('*').eq('id', params.match_id).single();
     
-        
         if(match.error) {
             console.log(match.error)
             return json({error: match.error}, {status: 500})
@@ -35,8 +31,9 @@ export const POST: RequestHandler = async function ({locals, params, request}){
     
         let ip = match.data.ip;
 
-        aws.terminateInstance(ip);
+        //aws.terminateInstance(ip);
 
+        await locals.supabase.from('matches').update({winner: '4'}).eq('id', params.match_id);
         return Success();
     
 }

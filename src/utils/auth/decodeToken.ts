@@ -9,6 +9,10 @@ if(process.argv[2] == '../.env'){
 
 let { JWT_ACCESS_TOKEN_SECRET } = process.env;
 
+type AdminToken = {
+    admin: boolean
+}
+
 export const decodeToken = (token: string | undefined) => {
     if(!token) return false;
     
@@ -16,6 +20,19 @@ export const decodeToken = (token: string | undefined) => {
     
     try{
         let t = jwt.verify(token, JWT_ACCESS_TOKEN_SECRET as string) as Partial<User>;
+        return t;
+    }catch(e){
+        return false;
+    }
+}
+
+export const decodeAdminToken = (token: string | undefined) => {
+    if(!token) return false;
+    
+    if(!JWT_ACCESS_TOKEN_SECRET) throw new Error('JWT_ACCESS_TOKEN_SECRET is not defined');
+    
+    try{
+        let t = jwt.verify(token, JWT_ACCESS_TOKEN_SECRET as string) as AdminToken;
         return t;
     }catch(e){
         return false;

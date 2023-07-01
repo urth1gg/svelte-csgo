@@ -27,7 +27,8 @@ declare global {
 		in_game: boolean,
 		in_party: boolean,
 		in_queue: boolean,
-		in_queue_timestamp: number
+		in_queue_timestamp: number,
+		in_game_match_id: string
 	}
 	interface User{
 		id: string,

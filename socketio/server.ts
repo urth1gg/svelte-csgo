@@ -3,13 +3,13 @@
 import { Server } from "socket.io";
 // import jwt from 'jsonwebtoken'
 //import { supabase } from '$utils/db/supabase';
-import { decodeToken } from '../src/utils/auth/decodeToken';
+import { decodeToken, decodeAdminToken } from '../src/utils/auth/decodeToken';
 import { signToken } from '../src/utils/auth/signToken';
 import { supabase } from "../src/utils/db/supabase";
 import type * as types from '../src/app.d';
 import * as FriendsService from '../src/lib/services/friends';
 import dotenv from 'dotenv';
-
+import { startMapVoteTimer } from "./timers";
 
 
 let sockets: any = {}
@@ -33,6 +33,7 @@ const SocketEvents = {
     START_MATCH: 'START_MATCH',
     SELECT_RANDOM_MAP: 'SELECT_RANDOM_MAP',
     CREATE_MATCH: 'CREATE_MATCH',
+    UPDATE_MAP: 'UPDATE_MAP',
     party_invite: 'party_invite',
     join: 'join',
     disconnect: 'disconnect'
@@ -41,8 +42,6 @@ const SocketEvents = {
 
 io.on("connection", (socket) => {
     sockets[socket.id] = socket;
-
-    console.log('connected', socket.id);
 
     socket.on("party_invite", (data) => {
         console.log('party_invite')
@@ -62,12 +61,21 @@ io.on("connection", (socket) => {
         let t = decodeToken(msg.token);
         
         if(!t) return;
+        if(!t.id) return;
 
         let prevId = socket.id; 
         delete sockets[prevId];
         delete sockets[t.id];
         sockets[t.id] = socket;
-        let p1_ = await supabase.from('users').select('party_id').eq('id', t.id).single();
+        let p1_ = await supabase.from(`
+            users
+        `).select(`
+            id,
+            party_id,
+            flags (
+                *
+            )
+        `).eq('id', t.id).single();
 
         if(p1_.error) return;
 
@@ -76,12 +84,15 @@ io.on("connection", (socket) => {
         if(partyId){
             socket.join(partyId);
         }
+        let matchId = p1_.data?.flags?.in_game_match_id;
+
     });
 
     socket.on('party_invite_accepted', async (data) => {
         let { token, friend } = data;
         let decoded = decodeToken(token);
         if(!decoded) return;
+        if(!decoded.id) return;
 
         let p1_ = supabase.from('users').select('party_id').eq('id', decoded.id).single().then();
         let p2_ = supabase.from('users').select('party_id').eq('id', friend.id).single().then();
@@ -124,7 +135,6 @@ io.on("connection", (socket) => {
 
         if(room){
             io.to(partyId).emit('REFRESH_PARTY', { partyId, partyMembers: partyMembers.data });
-
         }   
     })
 
@@ -156,9 +166,7 @@ io.on("connection", (socket) => {
     })
 
     socket.on(SocketEvents.REFRESH_ACTIVE_MAPS, async data => {
-        let { token, match } = data;
-        let decoded = decodeToken(token);
-        if(!decoded) return;
+        let { match } = data;
 
         let allPlayers = [...match.teamA, ...match.teamB].map(x => x.id);
 
@@ -173,9 +181,14 @@ io.on("connection", (socket) => {
     })
 
     socket.on(SocketEvents.MATCH_FOUND, async data => {
-        let { match } = data;
+        let { match, token } = data;
+
+        let decoded = decodeAdminToken(token);
 
         
+        if(!decoded) return;
+        if(!decoded.admin) return;
+
         let { matchId, teamA, teamB } = match; 
 
 
@@ -195,6 +208,36 @@ io.on("connection", (socket) => {
 
         if(room){
             io.to(matchIdAsAString).emit(SocketEvents.MATCH_FOUND, { matchId: matchIdAsAString, teamA, teamB });
+            setTimeout(() => {
+                let match_ = matches[matchIdAsAString];
+                let matchShouldBeDeleted = false;
+
+                match_.teamA.forEach( (x: any) => {
+
+                    if(x.acceptedMatch === false ){
+                        sockets[x.id]?.emit(SocketEvents.MATCH_DECLINED);
+                        matchShouldBeDeleted = true;
+                    }
+        
+                });
+        
+                match_.teamB.forEach( (x: any) => {
+                    if(x.acceptedMatch === false){
+                        sockets[x.id]?.emit(SocketEvents.MATCH_DECLINED);
+                        matchShouldBeDeleted = true;
+                    }
+                });
+        
+                if(matchShouldBeDeleted){
+                    io.emit("REMOVE_FROM_PLAYING_MATCHES", { 
+                        matchId: matchId, 
+                        teamA: match_.teamA.filter( (x: any) => x.acceptedMatch === true),
+                        teamB: match_.teamB.filter( (x: any) => x.acceptedMatch === true),
+                        token: token 
+                    });
+                    delete matches[matchId];
+                }
+            }, 10000);
         }
     })
 
@@ -228,84 +271,29 @@ io.on("connection", (socket) => {
             return x;
         })
 
-
         let signedToken = signToken({admin: true});
 
         if(match_.teamA.every( (x:any) => x.acceptedMatch) && match_.teamB.every( (x:any) => x.acceptedMatch)){
 
-            io.emit(SocketEvents.START_MATCH, { matchId, token: signedToken });
-            timeouts[matchId] = setTimeout( () => {
-                io.emit(SocketEvents.CREATE_MATCH, { matchId, token: signedToken });
-                clearTimeout(timeouts[matchId]);
-                delete timeouts[matchId];
-                delete matches[matchId];
-            }, 5000)
+            io.emit(SocketEvents.CREATE_MATCH, { matchId, token: signedToken });
+            if(signedToken) startMapVoteTimer(matchId, io, signedToken, matches);
+
         }
 
         io.emit(SocketEvents.UPDATE_PLAYERS, { matchId, teamA: match_.teamA, teamB: match_.teamB, token: signedToken })
-        let room = io.sockets.adapter.rooms.get(matchId);
 
-        if(room){
-            io.to(matchId).emit(SocketEvents.MATCH_ACCEPTED, match);
-        }
+        io.to(matchId).emit(SocketEvents.MATCH_ACCEPTED, match);
 
     });
 
-    socket.on(SocketEvents.MATCH_DECLINED, async data => {
-        let { token, match } = data;
-        let decoded = decodeToken(token);
+    socket.on(SocketEvents.START_MATCH, async data => {
+        let { token, matchId } = data;
+
+        let decoded = decodeAdminToken(token);
         if(!decoded) return;
+        if(!decoded.admin) return;
 
-        let { matchId } = match;
-
-
-        let match_ = matches[matchId];
-
-        let pass = signToken({ admin: true });
-        let matchShouldBeDeleted = false; 
-
-        if(!match_) return;
-        match_.teamA = match_.teamA.forEach( (x: any) => {
-            assertIsUser(decoded);
-
-            if(x.acceptedMatch === false ){
-                sockets[x.id]?.emit(SocketEvents.MATCH_DECLINED);
-                matchShouldBeDeleted = true;
-            }
-
-        });
-
-        match_.teamB = match_.teamB.forEach( (x: any) => {
-            assertIsUser(decoded);
-
-            if(x.acceptedMatch === false){
-                sockets[x.id]?.emit(SocketEvents.MATCH_DECLINED);
-                matchShouldBeDeleted = true;
-            }
-        });
-
-        if(matchShouldBeDeleted){
-            io.emit("REMOVE_FROM_PLAYING_MATCHES", { 
-                matchId: matchId, 
-                teamA: match_.teamA.filter( (x: any) => x.acceptedMatch === true),
-                teamB: match_.teamB.filter( (x: any) => x.acceptedMatch === true),
-                token: pass 
-            });
-            delete matches[matchId];
-        }
-        // }else{
-
-        //     io.emit(SocketEvents.START_MATCH, { matchId, token: pass });
-
-            // timeouts[matchId] = setTimeout( () => {
-            //     let map = matches[matchId].maps[Math.floor(Math.random() * matches[matchId].maps.length)]
-            //     io.emit(SocketEvents.SELECT_RANDOM_MAP, { map, token: pass });
-            //     clearTimeout(timeouts[matchId]);
-            //     delete timeouts[matchId];
-            //     delete matches[matchId];
-            // }, 10000)
-        // }
-
+        io.to(matchId).emit(SocketEvents.START_MATCH, { matchId });
     });
 
     socket.on('disconnect', () => {
@@ -315,15 +303,8 @@ io.on("connection", (socket) => {
 
 let timeouts: any = {};
 
-
-
 // assert is user typescript
 
-function assertIsUser(user: User | boolean): asserts user is User {
+function assertIsUser(user: Partial<User> | boolean): asserts user is User {
     if(user === false) throw new Error("User not found");
 }
-
-setInterval( () => {
-    console.log(Object.keys(sockets));
-}, 30000)
-

@@ -107,8 +107,20 @@ async function createMatch(activeMatch: any, supabase: any, map: string) {
             winner: '0'
         })
 
-    console.log('data', data)
-    console.log('created match')
+    if (error) {
+        console.log(error)
+        return false
+    }
+
+    return true
+}
+
+async function updateMatchMap(matchId: string, map: string, supabase: any) {
+    let { data, error } = await supabase
+        .from('matches')
+        .update({ map: map })
+        .eq('id', matchId)
+
     if (error) {
         console.log(error)
         return false
@@ -246,5 +258,6 @@ export {
     removeMapFromMatch, 
     createMatch, 
     matchEndedCallback,
-    getAllUnfinishedMatches
+    getAllUnfinishedMatches,
+    updateMatchMap
 }

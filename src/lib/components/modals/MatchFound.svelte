@@ -78,10 +78,9 @@
         </div>
     
         <div class="w-full">
-            <Timer seconds={5} callback={ () => {
+            <Timer seconds={10} callback={ () => {
                 $modals.showMatchFound = false;
                 localStorage.removeItem("MATCH_FOUND");
-                MatchEvents.emit("MATCH_DECLINED", { match: { matchId }, token: $accessToken });
             }}/>
         </div>
     </div>
