@@ -14,7 +14,7 @@
     let userVoted = false;
 
     let timeToConnect = 180; // start time in seconds
-
+    let timeToVote: any = null;
     const formatTime = (time: number) => {
         let minutes = Math.floor(time / 60);
         let seconds = (time % 60).toString().padStart(2, '0');
@@ -51,11 +51,7 @@
 
     onMount(async () => {
         await getMaps();
-    })
-
-    afterUpdate(() => {
-       
-    })
+    });
 
     MatchEvents.on("REFRESH_ACTIVE_MAPS", async (_: any) => {
         let data = await fetch_(`/api/match/${$page.params.matchId}/maps`, {
@@ -72,7 +68,7 @@
     })
 
     MatchEvents.on("MAP_VOTE_TIMER", (data: any) => {
-        console.log(data.secondsLeft)
+        timeToVote = data.secondsLeft
     });
 </script>
 
@@ -117,6 +113,11 @@
 
 <div class="w-9/12 ml-auto mr-auto mt-5">
     <SectionHeader title={!userVoted ? "Click on the map you'd like to ban." : "You have already voted."} divider={false} classProp="mb-3" />
+    {#if timeToVote !== null && timeToVote > 0}
+        <div class="flex justify-center">
+            <p class="time-to-connect">Time to vote: {timeToVote}s</p>
+        </div>
+    {/if}
     <div class="flex gap-5 section">
         <div class="flex flex-col w-3/12 gap-1">
             {#each teamA as player}

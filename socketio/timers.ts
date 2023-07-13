@@ -8,10 +8,10 @@ let intervals: { [key: string]: IntervalObject } = {};
 export const startMapVoteTimer = function(matchId: string, io: any, token: string, matches: any){
 
     intervals[matchId] = {
-        secondsLeft: 10,
+        secondsLeft: 20,
         interval: setInterval(() => {
             intervals[matchId].secondsLeft--;
-            if(intervals[matchId].secondsLeft === 0){
+            if(intervals[matchId].secondsLeft < 0){
                 io.emit("UPDATE_MAP", { matchId: matchId, token: token })
                 clearInterval(intervals[matchId].interval);
                 delete intervals[matchId];

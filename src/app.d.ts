@@ -106,4 +106,9 @@ declare global {
 	type Player = {
 		id: string,
 	}
+
+	type InstanceConfiguration = {
+		map: MapName,
+		matchId: string,
+	}
 }

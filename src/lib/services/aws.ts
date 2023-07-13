@@ -6,7 +6,7 @@ class Aws{
     constructor(){}
 
     async startInstance(token: string){
-        let request = await fetch('https://valhallla-ops.tk:5000/api/server-instance/start', {
+        let request = await fetch('https://dustydreams.gg:3001/api/server-instance/start', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -19,13 +19,32 @@ class Aws{
         return response;
     }
 
-    async terminateInstance(ip: string){
-        let request = await fetch('https://valhallla-ops.tk:5000/api/server-instance/terminate', {
+    async terminateInstance(token: string, ip: string){
+        let request = await fetch('https://dustydreams.gg:3001/api/server-instance/terminate', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
             },
             body: JSON.stringify({
+                ip: ip
+            })
+        })
+
+        let response = await request.json();
+
+        return response;
+    }
+
+    async setConfiguration(token:string, ip: string, config: InstanceConfiguration){
+        let request = await fetch('https://dustydreams.gg:3001/api/server-instance/set-config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({
+                config: config,
                 ip: ip
             })
         })

@@ -67,24 +67,30 @@ io.on("connection", (socket) => {
         delete sockets[prevId];
         delete sockets[t.id];
         sockets[t.id] = socket;
-        let p1_ = await supabase.from(`
-            users
-        `).select(`
+        let p1_ = await supabase.from('users').select(`
             id,
             party_id,
-            flags (
+            flags(
                 *
             )
         `).eq('id', t.id).single();
 
-        if(p1_.error) return;
+        console.log('join')
+        if(p1_.error){
+            console.log(p1_.error)
+            return;
+        }
 
         let partyId = p1_.data?.party_id;
 
         if(partyId){
             socket.join(partyId);
         }
+
         let matchId = p1_.data?.flags?.in_game_match_id;
+        if(matchId){
+            socket.join(matchId);
+        }
 
     });
 

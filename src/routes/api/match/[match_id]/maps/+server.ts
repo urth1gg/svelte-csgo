@@ -79,11 +79,9 @@ export const DELETE: RequestHandler = async function ({locals, request, params})
 
     removeMapFromMatch(playingMatches.matches[matchIndex], user.id, map_id);
 
-    console.log('map_deleted');
     if(playingMatches.matches[matchIndex].maps.size === 1){
         MatchEvents.emit("UPDATE_MAP", {match: playingMatches.matches[matchIndex]});           
     }else{
-        console.log('we here')
         MatchEvents.emit("REFRESH_ACTIVE_MAPS", {match: playingMatches.matches[matchIndex]})
     }
 

@@ -72,14 +72,27 @@ MatchEvents.on("CREATE_MATCH", async (data: any) => {
 
   let allPlayers = [...match.teamA, ...match.teamB];
 
-  let updatePromises = allPlayers.map(player => 
-    setUserFlags(player as Partial<User>, {in_game: true, in_game_match_id: matchId}, supabase)
-  );
-
-  let res = await Promise.all(updatePromises);
-
   if(matchCreated){
     MatchEvents.emit("START_MATCH", {matchId: match.matchId, token: token});
+    let updatePromises = allPlayers.map(player => 
+      setUserFlags(player as Partial<User>, {in_game: true, in_game_match_id: matchId, in_queue: false, in_queue_timestamp: 0}, supabase)
+    );
+
+    let response = await aws.startInstance(token);
+
+    console.log("response:", response);
+
+    if(!response["success"]){
+      return;
+    }else{
+      let instance_ip = response["instance_ip"]
+
+      let result = await supabase.from('matches').update({ip: instance_ip}).eq('id', matchId);
+
+      console.log("update:", result);
+    }
+
+    let res = await Promise.all(updatePromises);
   }
   
 });
@@ -106,10 +119,17 @@ MatchEvents.on("UPDATE_MAP", async (data: any) => {
 
   let isMapUpdated = await updateMatchMap(matchId, randomMap[0], supabase);
 
+  let config: InstanceConfiguration = {
+    matchId: matchId,
+    map: randomMap[0],
+  }
+
+  let ip = await supabase.from('matches').select('ip').eq('id', matchId).single().then((res: any) => res.data.ip);
+  if(!ip) return;
   
   if(isMapUpdated){
+    await aws.setConfiguration(token, ip, config);
     MatchEvents.emit("REFRESH_ACTIVE_MAPS", {match: match, token: token});
-    //let response = await aws.startInstance(t);
   }
 });
 
